@@ -9,7 +9,7 @@
 // that something happened but also tell us that data needs to be updated.
 ```
 
-在我们的程序中，有
+在我们的程序中，有时候我们将要处理的
 
 ```
 // This is actually quite a big challenge in any app.
