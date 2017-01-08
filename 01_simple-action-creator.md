@@ -51,7 +51,7 @@ var actionCreator = function() {
 
 ```js
 // We can call this action creator and get an action as expected:
-// 我们可以调用这个action构造器去获得一个如期的action
+// 我们可以调用这个action构造器去获得一个期望的action
 console.log(actionCreator())
 // Output: { type: 'AN_ACTION' }
 ```
@@ -63,7 +63,7 @@ console.log(actionCreator())
 // We call this process "Dispatching an action".
 ```
 
-好吧, 这虽然能工作但还是在原地...
+好吧, 这虽然能工作但还是在原地不动...
 我们所需要的是使该action被发送到某个地方以便对其感兴趣的人能够得知有事发生了并相应的完成一些动作. 我们称这个过程为"分发一个action“
 
 ```
