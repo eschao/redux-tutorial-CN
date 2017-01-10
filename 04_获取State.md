@@ -53,14 +53,14 @@ console.log('store_0 state after initialization:', store_0.getState())
 那么我们程序的State在初始化后仍然是**undefined**? 好吧, 它当然就该如此, 这是因为我们的Reducer什么也没做...
 还记得我们在第二节中是如何描述我们所期望的Reducer的行为吗?
 >>>
-  "Reducer仅仅是一个函数，这个函数接受你程序当前的State和Action, 并返回一个被修改后的新State"
+"Reducer仅仅是一个函数，这个函数接受你程序当前的State和Action, 并返回一个被修改后的新State"
   
 由于目前我们的Reducer什么也没有返回, 因此程序的State也就是Reducer()函数返回的**"undefined"**.
 
 ```
 // Let's try to send an initial state of our application if the state given to reducer is undefined:
 ```
-如果reducer认为state是undefined时, 让我们试着赋予程序一个初始化的状态
+如果传给Reducer函数的State是undefined的话, 我们就试着赋予程序一个初始化的State:
 ```js
 var reducer_1 = function (state, action) {
     console.log('reducer_1 was called with state', state, 'and action', action)
@@ -76,9 +76,10 @@ var store_1 = createStore(reducer_1)
 ```
 // Output: reducer_1 was called with state undefined and action { type: '@@redux/INIT' }
 ```
-输出: 程序使用参数state: undefined和action { type: '@@redux/INIT' }
-来调用reducer_1
-
+程序运行后输出:··
+```js
+    reducer_1 was called with state undefined and action { type: '@@redux/INIT' }
+```
 ```js
 console.log('store_1 state after initialization:', store_1.getState())
 ```
