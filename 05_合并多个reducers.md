@@ -1,12 +1,12 @@
 ```
 // Tutorial 05 - combine-reducers.js
 ```
-## 05 - 组合reducers
+## 05 - 组合多个reducers
 
 ```
 // We're now starting to get a grasp of what a reducer is...
 ```
-我们现在开始去了解一下reducer包含什么...
+现在我们去了解一下 reducer 函数包含了什么...
 
 ```js
 var reducer_0 = function (state = {}, action) {
@@ -28,7 +28,7 @@ var reducer_0 = function (state = {}, action) {
 // ... but before going further, we should start wondering what our reducer will look like when
 // we'll have tens of actions:
 ```
-...但在进一步的了解之前，我们应该会很好奇当我们拥有数十个actions的时候，我们的reducer会是什么样子？
+...但是在进一步深入之前，我们可能想知道, 当我们拥有数十个 actions 的时候，我们的 reducer 会变成什么样？
 
 ```js
 var reducer_1 = function (state = {}, action) {
@@ -59,19 +59,18 @@ var reducer_1 = function (state = {}, action) {
 // It becomes quite evident that a single reducer function cannot hold all our
 // application's actions handling (well it could hold it, but it wouldn't be very maintainable...).
 ```
-十分明显的就是单个reducer函数是无法处理我们程序所有的actions的(好吧，它能够处理所有的actions，但这将变得难以维护...).
+十分明显的是单个 reducer 函数是无法包含程序中所有 actions 的处理代码的 (好吧，它或许能包含，但这样的代码将变得难以维护...).
 
 ```
 // Luckily for us, Redux doesn't care if we have one reducer or a dozen and it will even help us to
 // combine them if we have many!
 ```
-幸运的是, Redux并不关心我们是有一个reducer还是有多个reducer,
-如果我们有多个的话，Redux其实会帮我们将他们组合在一起!
+幸运的是, Redux 并不关心我们是有一个 reducer 还是有多个 reducer. 如果我们有多个 reducer 函数的话，Redux其实能够帮助我们将他们合并在一起!
 
 ```
 // Let's declare 2 reducers
 ```
-让我们声明2个reducers试试
+让我们声明2个 reducers 试试:
 
 ```js
 var userReducer = function (state = {}, action) {
@@ -102,11 +101,12 @@ var itemsReducer = function (state = [], action) {
 // up to you to decide which data structure suits your needs (an object literal, an array,
 // a boolean, a string, an immutable structure, ...).
 ```
-我希望你特别的注意下实际传入给每个reducer的状态初始化值:
-userReducer获得是一个以字面量对象形式表示的状态初始化值,
-而itemsReducer得到的是一个以array形式表示的状态初始化值.
-这些只不过是为了表明一个reducer事实上是能够处理不同的数据结构类型.
-什么样的数据结果更适合于你的需求这都是由你自己来决定的.
+我希望你特别地注意下实际传给每个 reducer 的 state 初始化值:
+* **userReducer** 获得是一个以字面量对象形式表示的 state 初始化值.
+* **itemsReducer** 得到的是一个以array形式表示的 state 初始化值.
+
+这些不同的初始化值只不过是为了说明一个 reducer 实际能够处理不同的数据结构类型.
+你才真正地决定了什么样的数据结果适合于你的需求(字面量对象, 数组, 布尔, 字符串或者不可变的数据结构, ....).
 
 ```
 // With this new multiple reducer approach, we will end up having each reducer handle only
