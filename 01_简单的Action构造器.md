@@ -2,22 +2,22 @@
 // Tutorial 1 - simple-action-creator.js
 ```
 
-## 教程1 - 简单的action构造器
+## 01 - 简单的Action构造器
 
 ```
 // We started to talk a little about actions in the introduction but what exactly are those "action creators"
 // and how are they linked to "actions"?
 ```
-在简介中我们稍稍的涉及了一下actions, 但究竟什么是"action构造器"? 他们又怎样与"actions"关联起来的呢？
+在[简介一节](/00_简介.md)中我们稍稍地涉及了一下Actions, 但究竟什么是"Action Creator(动作构造器)"? 它们又是怎样与"Actions"关联起来的呢？
 
 ```
 // It's actually so simple that a few lines of code can explain it all!
 ```
-事实上它们如此的简单以至于了了数行代码就可以完全的解释!
+事实上它们如此的简单以至于了了数行代码就可以完全地解释!
 
 ```js
 // The action creator is just a function...
-// action构造器只不过是一个函数...
+// action creator只不过是一个函数...
 var actionCreator = function() {
     // ...that creates an action (yeah, the name action creator is pretty obvious now) and returns it
     // ...这会构建一个action并返回
@@ -39,7 +39,7 @@ var actionCreator = function() {
 // pass any data you want.
 ```
 
-然而，需要特别提到的一件事就是action的格式. 在flux中这种约定就是action是一个包含有**type**属性的对象. **type**允许对action做进一步的处理. 当然, action也可以包含其他的属性用于传递任何你想要传递的数据.
+然而，需要特别提到的一件事就是Action的格式. 在Flux中规定Action对象要包含一个**type**属性. **type**允许对Action的进一步处理. 当然, Action也可以包含其他的属性用于传递任何你想要传递的数据.
 
 ```
 // We'll also see later that the action creator can actually return something other than an action,
@@ -47,11 +47,11 @@ var actionCreator = function() {
 // in dispatch-async-action.js).
 ```
 
-同样我们将在后续中看到action构造器实际上可以返回一些非action的东西，比如一个函数. 这对于异步处理极为有用
+同样我们将在后续中看到Action Creator实际上可以返回一些非Action的东西，比如返回一个函数. 这对于异步处理极为有用.
 
 ```js
 // We can call this action creator and get an action as expected:
-// 我们可以调用这个action构造器去获得一个期望的action
+// 我们调用该action creator可以获得一个期望的action
 console.log(actionCreator())
 // Output: { type: 'AN_ACTION' }
 ```
@@ -63,8 +63,9 @@ console.log(actionCreator())
 // We call this process "Dispatching an action".
 ```
 
-好吧, 这虽然能工作但还是在原地不动...
-我们所需要的是使该action被发送到某个地方以便对其感兴趣的人能够得知有事发生了并相应的完成一些动作. 我们称这个过程为"分发一个action“
+好吧, 这虽然能工作但还是待在原地不动...
+
+我们所需要的是把该action发送到某个地方以便对其感兴趣的人能够得知有事发生了并相应的完成一些动作. 我们称这个过程为"分发一个Action“
 
 ```
 // To dispatch an action we need... a dispatch function ("Captain obvious").
