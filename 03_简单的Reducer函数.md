@@ -2,13 +2,13 @@
 // Tutorial 03 - simple-reducer.js
 ```
 
-## 03 - 简单的Reducer
+## 03 - 简单的Reducer函数
 
 ```
 // Now that we know how to create a Redux instance that will hold the state of our application
 // we will focus on those reducer functions that will allow us to transform this state.
 ```
-现在我们知道了如何创建一个Redux实例来持有我们程序的State. 接着我们将聚焦于那些可以让我们改变程序State的Reducer函数上.
+现在我们知道如何去创建一个Redux实例来持有我们程序的State. 接着我们将聚焦于那些可以让我们改变程序State的Reducer函数上.
 
 ```
 // A word about reducer VS store:
@@ -23,7 +23,7 @@
 
 你或许已注意到, 在[简介一节](0_简介.md)所展现的那张Flux图表中, 我们有一个"Store", 而不是Redux所期望的"Reducer". 那么到底Store与Reducer有何不同呢?
 
-这要比你想象的更简单: 一个Store会保存你的数据而Reducer则不会. 因此在传统的Flux中Stores持有State, 而在Redux中每次Reducer被调用时, 它(Reducer)就被传入一个需要被更新的State. 以此类推, Redux的Stores就变成了一个"无状态的Stores"并改名为Reducers.
+这要比你想象的更简单: Store会保存你的数据而Reducer则不会. 因此在传统的Flux中Stores持有State, 而在Redux中每次Reducer被调用时, 它(Reducer)就被传入一个需要被更新的State. 以此类推, Redux的Stores就变成了一个"无状态的Stores"并改名为Reducers.
 
 ```
 // As stated before, when creating a Redux instance you must give it a reducer function...
