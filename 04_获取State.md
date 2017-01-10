@@ -1,12 +1,12 @@
 ```
 // Tutorial 04 - get-state.js
 ```
-## 04 - 获取状态
+## 04 - 获取State
 
 ```
 // How do we retrieve the state from our Redux instance?
 ```
-我们如何从Redux实例中获取到程序的状态呢? 请看如下这段代码:
+我们如何从Redux实例中获取到程序的State呢? 请看如下这段代码:
 
 ```js
 import { createStore } from 'redux'
@@ -20,12 +20,15 @@ var store_0 = createStore(reducer_0)
 ```
 // Output: reducer_0 was called with state undefined and action { type: '@@redux/INIT' }
 ```
-输出: 程序使用参数state:undefined和action: { type: '@@redux/INIT' }调用reducer_0
+程序运行后输出: 
+```js
+    reducer_0 was called with state undefined and action { type: '@@redux/INIT' }
+```
 
 ```
 // To get the state that Redux is holding for us, you call getState
 ```
-你可以通过调用**getState**来获取Redux为我们持有的程序状态
+你可以通过调用**getState**函数来获取Redux为我们持有的程序State
 
 ```js
 console.log('store_0 state after initialization:', store_0.getState())
@@ -33,7 +36,10 @@ console.log('store_0 state after initialization:', store_0.getState())
 ```
 // Output: store_0 state after initialization: undefined
 ```
-输出: 初始化后store_0的状态为: undefined
+程序运行后输出:
+```js
+    store_0 state after initialization: undefined
+```
 
 ```
 // So the state of our application is still undefined after the initialization? Well of course it is,
@@ -44,12 +50,12 @@ console.log('store_0 state after initialization:', store_0.getState())
 // Our reducer is not returning anything right now so the state of our application is what
 // reducer() returns, hence "undefined".
 ```
-所以我们程序的状态在初始化后仍然是undefined? 好吧, 它当然就该如此,
-因为我们的reducer什么也没做...
-还记得我们在第二节中是如何描述我们所期望的reducer行为吗?
-  - "Reducer仅仅是一个函数，这个函数接受你程序当前的状态和action作为参数然后返回一个新的被修改后的状态
-由于目前我们的reducer什么也没有返回,
-因此程序的状态也就是reducer()函数返回的"undefined".
+那么我们程序的State在初始化后仍然是**undefined**? 好吧, 它当然就该如此, 这是因为我们的Reducer什么也没做...
+还记得我们在第二节中是如何描述我们所期望的Reducer的行为吗?
+>>>
+  "Reducer仅仅是一个函数，这个函数接受你程序当前的State和Action, 并返回一个被修改后的新State"
+  
+由于目前我们的Reducer什么也没有返回, 因此程序的State也就是Reducer()函数返回的**"undefined"**.
 
 ```
 // Let's try to send an initial state of our application if the state given to reducer is undefined:
