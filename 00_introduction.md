@@ -18,7 +18,7 @@
 // about (actions / actions creators, store, dispatcher, etc).
 ```
 
-当我尝试学习Redux的时候，我发现我通过阅读flux相关文章和个人经验所积累的flux知识是不正确的.这并不是说这些文章写的不好，而是我并没有正确地掌握其概念. 最后,我勉强地将其运用到不同的flux框架(Reflux, Flummon, FB Flux)文档上并尝试去匹配我所读到的那些相关理论概念(actions / action构造器, store, dispatcher等)
+在努力学习Redux的同时，我发现通过阅读相关文章和自身经验所积累的flux知识是不正确的. 不是说这些文章写的不好，而是我并没有正确地掌握其概念. 最后,我勉强地将这些知识运用于不同的flux框架(Reflux, Flummon, FB Flux)文档上并努力地匹配我在这些文档中读到的理论概念(比如:actions / action构造器, store, dispatcher等)
 
 ```
 // Only when I started using Redux did I realize that flux is more simple than I thought. This is all
@@ -28,12 +28,12 @@
 // flux concepts that I am starting to grasp, focusing on the use of Redux.
 ```
 
-只有当我开始使用Redux的时候才使我意识到flux要比我认为的更简单. 这全都要感谢Redux良好的设计以及移除了一大堆我以前尝试过的其他框架所引入的"反模版特性".这就是为什么现在我想用自己的语言来与大家分享那些我正开始掌握并聚焦于Redux使用的flux概念
+只有当我开始使用Redux的时候才让我意识到flux要比我想的更简单. 这全都要归功于Redux的良好设计以及移除了一大堆由那些我曾试过的框架所引入的"反模版功能".这就是为什么我现在想用自己的语言跟大家分享那些我正开始掌握,并集中在Redux使用上的flux概念
 
 ```
 // You may have seen this diagram representing the famous unidirectional data flow of a flux application:
 ```
-你有可能已经见过这样一张图, 它展现了flux程序中有名的单向数据流
+你有可能已经见过下面这张图表, 它展现的是flux程序中著名的单向数据流
 
 ```
                  _________               ____________               ___________
@@ -61,7 +61,7 @@
 // once we understand each of its parts.
 ```
 
-在本教程中,我会逐步的向你介绍上述图表中的那些概念. 但我不会尝试去解释整个图表及其描述的全部数据流, 我会将每一部分单独拿出来并尝试的去理解为什么需要它，它又扮演着怎样的角色. 最后你将看到只要我们明白了这张图的各个部分那么它就非常清楚了.
+在本教程中,我会逐步地向你介绍上述图表中的概念. 但我不会尝试去解释整个图表以及它所描述的整体数据流, 我会将图表中的每一部分单独拿出来并试着去理解为什么需要它，它在图表中扮演了什么角色. 最后你将看到一旦我们明白了图表的各个部分, 那么整张图表就非常清晰了.
 
 ```
 // But before we start, let's talk a little bit about why flux exists and why we need it...
@@ -71,8 +71,9 @@
 // 3) Logic to retrieve data, glue all views together and to react accordingly to user events,
 //    data modifications, etc. = Controller
 ```
-但在开始前, 我想简单地聊一下为什么会有flux, 为什么我们需要它...
-假如我们正在构建一个web程序，那整个web程序由什么组成呢?
+但在我们开始前, 我想简单地聊一下为什么会有flux, 为什么我们需要它...
+
+假如我们正在构建一个web应用程序，那整个web应用程序由哪些部分构成呢?
 * 视图 **View** = 模版 / HTML
 * 模型 **Models** = 用于生成视图的数据
 * 控制器 **Controller** = 获取数据的逻辑部分, 将所有视图粘合在一起的部分, 以及对用户事件或数据修改作出相应的反应部分等
@@ -85,11 +86,10 @@
 //   "action creators" -> action -> dispatcher -> callback
 // - Views look like React views (or anything else as far as flux is concerned)
 ```
-这就是我们所熟知的非常经典的MVC. 但实际上它看起来也有些像flux的概念,只不过flux以另一种稍微不同的方式来表达:
-* 模型Model就好比Store
-* 用户事件,数据的改动以及相应的处理函数就好比:**"action构造器"->action->分发器->回调**部分
-* 视图View就好比React视图
-
+这就是我们所熟知的十分经典的MVC. 但实际上它也有些像flux的概念,只不过flux用一中略微不同的方式来表述:
+* 模型Model = **Store(存储)**
+* 用户事件,数据的改动以及相应的处理函数 = **"action creator(构造器)"->action->dispatcher(分发器)->callback(回调)**
+* 视图View = **React View(React视图)**
 ```
 // So is flux just a matter of new vocabulary? Not exactly. But vocabulary DOES matter, because by introducing
 // these new terms we are now able to express more precisely things that were regrouped under
@@ -99,7 +99,7 @@
 // actions directly modify Models or Views, flux ensures all actions go first through something called
 // a dispatcher, then through our stores, and finally all watchers of stores are notified.
 ```
-那么flux仅仅只是个新词而已吗? 并非完全如此. 但是词汇也蛮重要的, 因为通过引入这些新的术语, 现在我们就能够更准确的表达那些用各种各样术语重新组合起来的东西. 比如: 获取数据并非是一个action? 还是如点击事件一样也是一个action呢? 一个输入的变化也是一个action... 我们都已经习惯了从我们的程序中触发actions, 只不过称呼不同而已. 并且flux并不会拥有那些能直接修改模型或视图的actions的处理函数，而是确保所有的actions先要通过一个被称为dispatcher的部分, 然后再通过我们的stores,最后所有stores的关注者都会被通知.
+那么flux仅仅只是个新词而已吗? 并非完全如此. 但词汇也是蛮重要的, 因为这些新术语的引入, 我们如今就能够更准确的表达那些用各种各样术语重新组合起来的新概念. 比如: 获取数据会像点击事件一样也是一个action吗? 一个输入部分的变化也是一个action吗?... 我们都已经习惯了从我们的程序中触发actions, 只不过称呼不同而已. 并且flux并不会拥有那些能直接修改模型或视图的actions的处理函数，而是确保所有的actions先要通过一个被称为dispatcher的部分, 然后再通过我们的stores,最后所有stores的关注者都会被通知.
 
 ```
 // To get more clarity how MVC and flux differ, we'll // take a classic use-case in an MVC application:
