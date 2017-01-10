@@ -18,7 +18,7 @@
 // about (actions / actions creators, store, dispatcher, etc).
 ```
 
-在努力学习Redux的同时，我发现通过阅读相关文章和自身经验所积累的Flux知识是不正确的. 不是说这些文章写的不好，而是我并没有正确地掌握其概念. 最后,我勉强地将这些知识运用于不同的Flux框架(Reflux, Flummon, FB Flux)文档上并努力地匹配我在这些文档中读到的理论概念(比如:Actions / Action构造器, Store, Dispatcher等)
+在努力学习Redux的同时，我发现通过阅读相关文章和自身经验所积累的Flux知识是不正确的. 不是说这些文章写的不好，而是我并没有正确地掌握其概念. 最后,我勉强地将这些知识运用于不同的Flux框架(Reflux, Flummon, FB Flux)文档上并努力地匹配我在这些文档中读到的理论概念(比如:Actions / Action Creator, Store, Dispatcher等)
 
 ```
 // Only when I started using Redux did I realize that flux is more simple than I thought. This is all
@@ -82,7 +82,7 @@
 ```
 但在开始之前, 我想简单地聊一下为什么会有Flux, 为什么我们需要它...
 
-假如我们正在构建一个web应用程序，那整个web应用程序由哪些部分构成呢?
+假如我们正在构建一个web应用程序，那整个web应用程序由哪些部分组成呢?
 * 视图 **View** = 模版 / HTML
 * 模型 **Models** = 用于生成视图的数据
 * 控制器 **Controller** = 获取数据的逻辑部分, 将所有视图粘合在一起的部分, 以及对用户事件或数据修改作出相应的反应部分等
@@ -108,7 +108,7 @@
 // actions directly modify Models or Views, flux ensures all actions go first through something called
 // a dispatcher, then through our stores, and finally all watchers of stores are notified.
 ```
-那么Flux仅仅只是个新词而已吗? 并非完全如此. 但词汇也很蛮重要, 因为这些新术语的引入, 我们如今就能够更准确的表达那些用各种各样术语重新组合起来的东西. 比如: 获取数据会像点击事件一样也是一个Action吗? 一个输入部分的变化也是一个Action吗?... 总之我们都已经习惯于从我们的程序中分发Actions, 只不过对此叫法不同而已. 然而Flux并不会拥有那些能够直接修改Models或Views的Actions处理函数，而是确保所有的Actions先要通过一个被称为Dispatcher的部分, 然后再通过我们的Stores部分, 最后所有Stores的关注者都会被通知.
+那么Flux仅仅只是个新词而已吗? 并非完全如此. 但词汇也很重要, 因为这些新术语的引入, 我们如今就能够更准确的表达那些用各种各样术语重新组合起来的东西. 比如: 获取数据会像点击事件一样也是一个Action吗? 一个输入部分的变化也是一个Action吗?... 总之我们都已经习惯于从我们的程序中分发Actions, 只不过对此叫法不同而已. 然而Flux并不会拥有那些能够直接修改Models或Views的Actions处理函数，而是确保所有的Actions先要通过一个被称为Dispatcher的部分, 然后再通过我们的Stores部分, 最后所有Stores的关注者都会被通知.
 
 ```
 // To get more clarity how MVC and flux differ, we'll 
