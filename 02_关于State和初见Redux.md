@@ -17,7 +17,7 @@
 // How do I handle modification of such data?
 // How do I propagate modifications to all parts of my application?
 ```
-事实上在任何的程序中，这都会是一个相当大的挑战.
+事实上对于任何的程序, 这都是一个相当大的挑战.
 - 我该在什么地方沿着程序中所有数据的生命周期来保存他们呢?
 - 我该怎样处理这些数据的修改呢？
 - 我该如何将修改消息通知到我程序中的其它部分呢？
