@@ -6,7 +6,7 @@
 ```
 // How do we retrieve the state from our Redux instance?
 ```
-我们如何从Redux实例中获取到程序的State呢? 请看如下这段代码:
+我们如何从 Redux 实例中获取到程序的 state 呢? 请看如下这段代码:
 
 ```js
 import { createStore } from 'redux'
@@ -189,5 +189,5 @@ console.log('store_3 state after initialization:', store_3.getState());
 // Now that we're starting to handle actions in our reducer let's talk about having multiple reducers and
 // combining them.
 ```
-既然我们已开始在Reducer中处理Actions了，那么我们看看拥有多个Reducer函数的情况以及如何将他们组合在一起.
+既然我们已开始在 reducer 中处理 actions 了，那么让我们看看拥有多个 reducer 函数的情况以及如何将他们合并在一起.
 
