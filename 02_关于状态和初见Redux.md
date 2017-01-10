@@ -2,15 +2,14 @@
 // Tutorial 02 - about-state-and-meet-redux.js
 ```
 
-## 关于State
+## 02 - 关于State和初见Redux
 
 ```
 // Sometimes the actions that we'll handle in our application will not only inform us
 // that something happened but also tell us that data needs to be updated.
 ```
 
-在我们的程序中，有时候我们将要处理的actions不仅会通知我们什么事会发生同时也会告诉
-我们哪些数据要被更新
+在我们的程序中，有时候我们要处理的Actions不仅能够通知我们会发生什么事同时也能告诉我们哪些数据会被更新.
 
 ```
 // This is actually quite a big challenge in any app.
@@ -18,26 +17,26 @@
 // How do I handle modification of such data?
 // How do I propagate modifications to all parts of my application?
 ```
-事实上在任何的程序中，这都是一个相当大的挑战.
-我该在什么地方保持我程序中所有数据的生命期呢?
-我该怎样处理这种数据的修改呢？
-我该如何将修改广播到我程序的其它部分呢？
+事实上在任何的程序中，这都会是一个相当大的挑战.
+- 我该在什么地方沿着程序中所有数据的生命周期来保存他们呢?
+- 我该怎样处理这些数据的修改呢？
+- 我该如何将修改消息通知到我程序中的其它部分呢？
 
 ```
 // Here comes Redux.
 ```
-Redux出现了.
+这时Redux出现了.
 
 ```
 // Redux (https://github.com/rackt/redux) is a "predictable state container for JavaScript apps"
 ```
-Redux是一个"为JavaScript程序提供一个可预知的状态容器"
+Redux是一个"JavaScript应用程序的可预测状态容器".
 
 ```
 // Let's review the above questions and reply to them with
 // Redux vocabulary (flux vocabulary too for some of them):
 ```
-我们先回顾一下上述问题并用Redux术语来回答
+我们先回顾一下上述问题并用Redux术语来回答:
 
 ```
 // Where do I keep all the data regarding my application along its lifetime?
@@ -53,21 +52,16 @@ Redux是一个"为JavaScript程序提供一个可预知的状态容器"
 // How do I propagate modifications to all parts of my application?
 //     Using subscribers to state's modifications.
 ```
-我该在什么地方保持我程序中所有数据的生命期呢?
-- 你可以以任何的方式保存它(JS对象, 数组, 不可变结构体, ...)
-- 你程序中的数据被称为State. 这合乎情理, 因为我们所涉及的程序中的所有数据都会
-  随着事件而改变, 这其实就是程序的状态State.
-- 不过你将他们交给了Redux(Redux是一个"状态容器", 还记得吗？)
-
-我该怎样处理这种数据的修改呢？
-- 使用reducers(在传统的flux中被称为"stores")
-- 一个reducer就是对actions的一个订阅者subscriber
-- 一个reducer只不过是一个可以接受你程序当前状态, action,
-  并返回一个新的被修改后的状态的函数
-
-我该如何将修改广播到我程序的其它部分呢？
-- 使用对于状态修改的订阅者subscribers
-
+* 我该在什么地方沿着程序中所有数据的生命周期来保存他们呢?
+  - 你可以以任何的方式保存程序中的数据 (比如: JS对象, 数组, 不可变结构体, ...).
+  - 你程序中的数据被称为State(状态). 这个称谓合乎情理, 因为程序中所有我们谈论到的数据都会随着时间而演变, 这其实就是程序的State.
+  - 只不过你将他们交给了Redux (Redux是一个"State容器", 还记得吗？).
+* 我该怎样处理这些数据的修改呢？
+  - 使用Reducers(在传统的Flux中被称为"Stores").
+  - 一个Reducer就是Actions的一个Subscriber(订阅者).
+  - 一个Reducer只不过是一个函数, 该函数可以接受你程序当前的State和Action, 并返回一个新的被修改后的State.
+* 我该如何将修改消息通知到我程序中的其它部分呢？
+  - 使用对于State修改的Subscribers(订阅者).
 
 ```
 // Redux ties all this together for you.
@@ -76,15 +70,14 @@ Redux是一个"为JavaScript程序提供一个可预知的状态容器"
 //     2) a mechanism to dispatch actions to modifiers of your application state, AKA reducers
 //     3) a mechanism to subscribe to state updates
 ```
-Redux为你捆绑了这一切.
-总之, Redux将为你提供:
-* 一个存放你程序状态的地方
-* 一个将action分发到你程序状态修改者的机制, 又名reducers
-* 一个对订阅状态更新的机制
+Redux为你捆绑了这一切. 总之, Redux将为你提供:
+* 一个存放你程序State的地方
+* 一个将Action分发给你程序State修改者的机制, 又名Reducers
+* 一个对订阅State更新的机制
 
 ```js
 // The Redux instance is called a store and can be created like this:
-// Redux实例被称为store, 可以如下来创建:
+// Redux实例被称为Store, 可以这样创建:
 
     import { createStore } from 'redux'
     var store = createStore()
@@ -92,15 +85,16 @@ Redux为你捆绑了这一切.
 
 ```
 // But if you run the code above, you'll notice that it throws an error:
-// 但如果你运行上面的代码, 你将发现它会抛出一个异常:
-//     Error: Invariant Violation: Expected the reducer to be a function.
+```
+但如果运行上面的代码, 你会发现它将抛出一个异常:
+```js
+     Error: Invariant Violation: Expected the reducer to be a function.
 ```
 
 ```
 // That's because createStore expects a function that will allow it to reduce your state.
 ```
-
-这是因为createStore需要传入一个函数用于reduce你程序的状态
+这是因为**createStore**需要传入一个函数用于改变(reduce)你程序的State
 
 ```
 // Let's try again
