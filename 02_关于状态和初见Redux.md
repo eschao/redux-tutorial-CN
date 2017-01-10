@@ -36,7 +36,7 @@ Redux是一个"JavaScript应用程序的可预测状态容器".
 // Let's review the above questions and reply to them with
 // Redux vocabulary (flux vocabulary too for some of them):
 ```
-我们先回顾一下上述问题并用Redux术语来回答:
+我们先回顾一下上述问题并用Redux语言来回答:
 
 ```
 // Where do I keep all the data regarding my application along its lifetime?
@@ -73,7 +73,7 @@ Redux是一个"JavaScript应用程序的可预测状态容器".
 Redux为你捆绑了这一切. 总之, Redux将为你提供:
 * 一个存放你程序State的地方
 * 一个将Action分发给你程序State修改者的机制, 又名Reducers
-* 一个对订阅State更新的机制
+* 一个State更新的订阅机制
 
 ```js
 // The Redux instance is called a store and can be created like this:
