@@ -39,7 +39,7 @@ var actionCreator = function() {
 // pass any data you want.
 ```
 
-然而，需要特别提到的一件事就是Action的格式. 在Flux中规定Action对象要包含一个**type**属性. **type**允许对Action的进一步处理. 当然, Action也可以包含其他的属性用于传递任何你想要传递的数据.
+然而，需要特别提到的一件事就是Action的格式. 在Flux中规定Action对象要包含一个**type**属性. **type**允许对Action进一步处理. 当然, Action也可以包含其他的属性用于传递任何你想要传递的数据.
 
 ```
 // We'll also see later that the action creator can actually return something other than an action,
@@ -65,7 +65,7 @@ console.log(actionCreator())
 
 好吧, 这虽然能工作但还是待在原地不动...
 
-我们所需要的是把该action发送到某个地方以便对其感兴趣的人能够得知有事发生了并相应的完成一些动作. 我们称这个过程为"分发一个Action“
+我们所需要的是把该Action发送到某个地方以便对其感兴趣的人能够得知某事发生了并相应地完成一些动作. 我们称这个过程为"分发一个Action“
 
 ```
 // To dispatch an action we need... a dispatch function ("Captain obvious").
@@ -74,15 +74,15 @@ console.log(actionCreator())
 // we'll see in the next section how they are called in Redux.
 ```
 
-为了分发一个action，我们需要的... 显然是一个分发函数了. 为了让感兴趣的人得知该action发生了, 我们需要一个机制去注册"处理函数". 这些对action的"处理函数"在传统的flux程序中被称之为stores, 而我们将在接下来的章节中看到他们在Redux中叫什么.
+为了分发一个Action，我们需要的... 显然是一个分发函数了. 为了让感兴趣的人得知该Action发生了, 我们需要一个机制去注册"Handlers(处理函数)". 这些对Action的"处理函数"在传统的Flux程序中被称之为Stores, 而我们将在接下来的章节中看到他们在Redux中被称之为什么.
 
 ```
 // So far here is the flow of our application:
 // ActionCreator -> Action
 ```
-到目前为止我们程序的流程就是:
+到目前为止我们程序的流向就是:
 
-**Action构造器 -> Action**
+**Action Creator -> Action**
 
 
 ```
