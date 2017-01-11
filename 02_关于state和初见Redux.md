@@ -2,7 +2,7 @@
 // Tutorial 02 - about-state-and-meet-redux.js
 ```
 
-## 02 - 关于State和初见Redux
+## 02 - 关于 state 和初见 Redux
 
 ```
 // Sometimes the actions that we'll handle in our application will not only inform us
