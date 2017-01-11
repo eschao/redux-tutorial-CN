@@ -170,5 +170,5 @@ console.log('store_0 state after action SET_NAME:', store_0.getState())
 
 目前我们程序的流程变成了:
 
-** action creator -> action -> dispatcher -> reducer **
+**action creator -> action -> dispatcher -> reducer**
 
