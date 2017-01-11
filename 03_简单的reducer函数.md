@@ -2,7 +2,7 @@
 // Tutorial 03 - simple-reducer.js
 ```
 
-## 03 - 简单的Reducer函数
+## 03 - 简单的 reducer 函数
 
 ```
 // Now that we know how to create a Redux instance that will hold the state of our application
