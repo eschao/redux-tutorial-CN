@@ -67,11 +67,11 @@ store_0.dispatch(asyncSayActionCreator_1('Hi'))
 // tip: "Use custom middleware for async actions.". It looks like we're on the right path but what is this
 // "middleware" thing?
 ```
-似乎我们的函数根本就没有执行到我们的 reducers 函数. 但 Redux 已经给了我们一个足够善意的提示: "为异步 action 使用自定义的 middleware ".
-看起来我们正走在正确的道路上, 但什么是 **middleware** 呢？
+看起来我们的函数根本就没有执行到我们的 reducers . 但 Redux 已经给了我们一个足够友好的提示: "为异步 action 使用自定义的 middleware ".
+似乎我们正走在正确的道路上, 但什么是 **middleware** 呢？
 
 ```
 // Just to reassure you, our action creator asyncSayActionCreator_1 is well-written and will work as expected
 // as soon as we've figured out what middleware is and how to use it.
 ```
-仅为了消除你的疑虑, 我们的 action creator **asyncSayActionCreator_1** 写的很好, 只要我们明白了什么是 middleware 并且知道如何使用它，异步 action creator 就能如期的工作了.
+仅仅为了消除你的疑虑, 我们的 action creator 函数 **asyncSayActionCreator_1** 写的很好, 只要我们明白了什么是 middleware 并且知道如何使用它，异步 action creator 就能如期的工作了.
