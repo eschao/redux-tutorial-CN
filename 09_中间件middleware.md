@@ -2,14 +2,13 @@
 // Tutorial 09 - middleware.js
 ```
 
-## 09 - 中间件middleware
+## 09 - 中间件 middleware
 
 ```
 // We left dispatch-async-action-2.js with a new concept: "middleware". Somehow middleware should help us
 // to solve async action handling. So what exactly is middleware?
 ```
-在上一节中我们留下了一个新的概念: "中间件middleware".
-不管怎样middleware会帮助我们解决异步action的处理问题. 那么到底什么是middleware?
+在上一节中我们留下了一个新的概念: **"中间件 middleware"**. 不管怎样 middleware 可以帮助我们解决异步 action 的处理问题. 那么到底什么是 middleware?
 
 ```
 // Generally speaking middleware is something that goes between parts A and B of an application to
@@ -18,7 +17,7 @@
 // we end up having
 // A ---> middleware 1 ---> middleware 2 ---> middleware 3 --> ... ---> B
 ```
-总的来说middleware是一种运行在程序A部分和B部分之间用于将A发送给B的数据在传送给B之前先做一些变换的组件.  因此将不再是:
+总的来说 middleware 是一种运行在程序 A 部分和 B 部分之间, 用于将 A 发送给 B 的数据在传送给 B 之前先做一些转换的组件. 因此程序流程将不再是:
 
   **A -----> B**
 
@@ -32,7 +31,7 @@
 // middleware between our action creator and our reducers, we could transform this function into something
 // that suits Redux:
 ```
-在Redux的上下文中middleware是如何帮组我们的呢？哦看起来从我们异步action构造器中返回的函数是不能够直接地被Redux处理, 但如果有一个中间件位于我们的action构造器和reducers之间， 我们就能够将该函数转换成适合Redux的东西:
+在 Redux 的上下文中 middleware 是如何帮助我们的呢？好吧, 看起来从我们异步 action creator 中返回的函数是不能够直接地被 Redux 处理, 但如果有一个 middleware 位于我们的 action creator 和 reducers 之间, 我们就能够将该函数转换成适合 Redux 的东西:
 
 ```
 // action ---> dispatcher ---> middleware 1 ---> middleware 2 ---> reducers
@@ -45,7 +44,7 @@
 // dispatch the real action when it wants to (or do nothing - this is a totally valid and
 // sometimes desired behavior).
 ```
-我们的中间件在每次action被分发的时候都会被调用,
+我们的 middleware 在每次 action 被分发的时候都会被调用,
 并且它能够在需要的时候帮助我们的action构造器去分发一个真实的action
 
 ```
