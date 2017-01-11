@@ -2,7 +2,7 @@
 // Tutorial 1 - simple-action-creator.js
 ```
 
-## 01 - 简单的Action构造器
+## 01 - 简单的 action 构造器
 
 ```
 // We started to talk a little about actions in the introduction but what exactly are those "action creators"
