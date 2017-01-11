@@ -2,21 +2,20 @@
 // Tutorial 07 - dispatch-async-action-1.js
 ```
 
-## 07 - 分发一个异步action-1
+## 07 - 分发异步 action -1
 
 ```
 // We previously saw how we can dispatch actions and how those actions will modify
 // the state of our application thanks to reducers.
 ```
-我们在之前的章节中已经看到了是怎样的分发action以及这些action是如何的修改我们程序的状态的, 这要感谢reducers函数
+我们在之前的章节中已经看到了如何的分发 action 以及这些 action 是如何的修改我们程序 state 的, 这要感谢 reducers 函数.
 
 ```
 // But so far we've only considered synchronous actions or, more exactly, action creators
 // that produce an action synchronously: when called an action is returned immediately.
 ```
-但迄今为止我们仅仅考虑到了同步actions, 或者更准确点,
-就是那些同步地产生actions的action构造器: 也就是说当调用action构造器时,
-action会立即的产生并返回给调用者
+但迄今为止我们仅仅考虑到了同步 actions , 或者更准确点说, 就是那些同步地产生 actions 的 action creator: 也就是说当调用 action creator时,
+action 会立即的产生并返回给调用者.
 
 ```
 // Let's now imagine a simple asynchronous use-case:
@@ -25,9 +24,9 @@ action会立即的产生并返回给调用者
 // 3) 2 seconds later, our view is updated with the message "Hi"
 ```
 我们来思考一个简单的异步用例:
-* 用户点击按钮"2秒后显示Hi"
-* 当按钮"A"被点击后, 我们想在2秒过后显示一个消息"Hi"
-* 2秒之后, 我们的视图会被更新并显示消息"Hi"
+* 用户点击按钮 "2秒后显示Hi"
+* 当按钮 "A" 被点击后, 我们想在2秒过后显示一个消息 "Hi"
+* 2秒之后, 我们的 view 会被更新并显示消息 "Hi"
 
 ```
 // Of course this message is part of our application state so we have to save it
@@ -38,9 +37,9 @@ action会立即的产生并返回给调用者
 
 // If we were to call an action creator like we did until now...
 ```
-当然, 这个消息也是我们程序状态的一部分了. 所以我们要将它存在Redux的store中.
-但我们想要的是让我们的store在action构造器别调用2秒后保存下该消息(...)
-如果我们还想目前为止我们所做过的那样去调用action构造器...
+当然, 这个消息也是我们程序 state 的一部分了. 所以我们要将它保存在 Redux 的 store 中. 但我们想要的是让我们的 store 在 action creator被调用2秒后保存下该消息(因为如果我们立即更新程序的 state , 任何一个关注 state 修改的 subscriber - 比如 view -- 都将马上被通知并可能未及2秒就进行了更新)
+
+如果我们还像目前为止我们所做过的那样去调用 action creator ...
 
 ```js
 import { createStore, combineReducers } from 'redux'
@@ -82,7 +81,7 @@ console.log('store_0 state after action SAY:', store_0.getState())
 //     Sun Aug 02 2015 01:03:05 GMT+0200 (CEST)
 //     store_0 state after action SAY: { speaker: { message: 'Hi' } }
 ```
-程序会输出(忽略掉初始化部分):
+运行后输出(忽略掉初始化部分):
 ```js
      Sun Aug 02 2015 01:03:05 GMT+0200 (CEST)
      speaker was called with state {} and action { type: 'SAY', message: 'Hi' }
@@ -93,12 +92,12 @@ console.log('store_0 state after action SAY:', store_0.getState())
 ```
 // ... then we see that our store is updated immediately.
 ```
-...这样我们发现我们的store立即就被更新了.
+...然后我们看到我们的 store 立即就被更新了.
 
 ```
 // What we'd like instead is an action creator that looks a bit like this:
 ```
-想法我们想要的这个action构造器看起来有点像这样:
+而我们想要的这个 action creator 看起来有点像这样:
 
 ```js
 var asyncSayActionCreator_0 = function (message) {
@@ -115,18 +114,15 @@ var asyncSayActionCreator_0 = function (message) {
 // But then our action creator would not return an action, it would return "undefined". So this is not
 // quite the solution we're looking for.
 ```
-可这样我们的action构造器并不会返回一个action, 它将返回"undefined".
-所以这并非就是一个我们想要的解决办法.
+可这样的话, 我们的 action creator 并不会返回一个 action , 它将返回 **"undefined"**. 所以这并非就是一个我们想要的解决方案.
 
 ```
 // Here's the trick: instead of returning an action, we'll return a function. And this function will be the
 // one to dispatch the action when it seems appropriate to do so. But if we want our function to be able to
 // dispatch the action it should be given the dispatch function. Then, this should look like this:
 ```
-技巧在于: 我们将返回一个函数而不是一个action.
-而这个函数将在恰当的时机去分发一个action.
-但如果我们想要该函数能够分发一个action而又应该接受一个dispatch函数. 那么,
-这个函数应该看起来像这样:
+而技巧在于: 我们将返回一个函数而不是一个 action . 而这个函数将在恰当的时机去分发一个 action .
+但如果我们想要该函数能够分发一个 action 而又要接受一个 dispatch 函数. 那么, 这个函数看起来应该像这样:
 
 ```js
 var asyncSayActionCreator_1 = function (message) {
@@ -146,7 +142,5 @@ var asyncSayActionCreator_1 = function (message) {
 // So there is a high chance that our reducers won't know what to do with it. But you never know, so let's
 // try it out and find out what happens...
 ```
-再一起，你会发现我们的action构造器不会返回一个action, 而是返回一个函数.
-所以我们的reducer函数很有可能不知道该怎么处理.
-但你是知道他们没法处理的，那么让我们试试看并找出到底会发生什么...
+再一次，你会发现我们的 action creator 不是返回一个 action , 而是返回一个函数. 所以我们的 reducer 函数很有可能不知道该怎么去处理. 但你却并不清楚，那么让我们试试看并找出到底会发生什么 ...
 
