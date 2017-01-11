@@ -1,7 +1,7 @@
 ```
 // Tutorial 04 - get-state.js
 ```
-## 04 - 获取State
+## 04 - 获取 state
 
 ```
 // How do we retrieve the state from our Redux instance?
