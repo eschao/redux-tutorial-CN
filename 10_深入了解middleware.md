@@ -205,4 +205,31 @@ const crashReporter = store => next => action => {
     }
 }
 ```
-这
+这正是 Redux middleware 的样子
+现在 middleware 接受 ```next()``` dispatch 函数参数, 并返回一个新的 dispatch 函数, 然后从左开始依次作为 ```next()``` 传给下一个 middleware 等等. 访问类似 ```getState()``` 这样的其他 store 方法仍然有用. 所以 store 被保留下来作为一个顶层的参数.
+
+### 第6次尝试: 天真地应用 Middleware
+
+与 ```applyMiddlewareByMonkeypatching()``` 不同的是, 我们会写一个新的 ```applyMiddleware()``` 用于首次获得一个最终的完全包装好的 ```dispatch``` 函数, 并返回一个使用它的 store 拷贝:
+```js
+// Warning: Naïve implementation!
+// That's *not* Redux API.
+
+function applyMiddleware(store, middlewares) {
+    middlewares = middlewares.slice()
+    middlewares.reverse()
+
+    let dispatch = store.dispatch
+    middlewares.forEach(middleware =>
+        dispatch = middleware(store)(dispatch)
+    )
+
+    return Object.assign({}, store, { dispatch })
+}
+```
+这基本与 Redux 内部的 ```applyMiddleware()``` 实现相同. 但在以下三个重要方面有所不同:
+* 对于 middleware, 它只暴露了 store API 中的一部分: ```dispatch(action)``` 和 ```getState()```.
+* 它使用了一点点手段用于确保当你从你的 middleware 而不是 ```next(action)``` 去调用 ```store.dispatch(action)``` 时, action 实际会再次穿越整个 middleware 链, 也包含当前的 middleware . 这对于异步方式的 middleware 很有用.
+* 为了保证你只应用了 middleware 一次. 它会作用在 ```createStore()``` 而非 store 自身上. 因而它的签名是 ```(...middlewares) => (createStore) => createStore``` 而不是 ```(store, middlewares) => store```.
+
+由于在使用之前将函数应用到 ```createStore()``` 有些繁琐, 所以 ```createStore()``` 可接受一个可选的末尾参数用于传入这些函数.
