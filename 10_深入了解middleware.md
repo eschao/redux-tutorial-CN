@@ -143,4 +143,27 @@ function applyMiddlewareByMonkeypatching(store, middlewares) {
 }
 ```
 
-然后我们可以如下这样将
+然后我们可以如下这样将其应用到多个 middleware 上:
+```js
+applyMiddlewareByMonkeypatching(store, [ logger, crashReporter ])
+```
+然而, 这还是一个 monkeypatching. 我们将它隐藏在 Redux 库里的事实并没有改变其本质.
+
+### 第5次尝试: 移除 Monkeypathcing
+
+为什么我们还要覆盖掉 ```dispatch``` 函数呢? 当然这是为了以后能调用它. 但这儿还有一个另外的原因: 是为了让每个 middleware 都能访问被包装的 ```store.dispatch``` :
+```js
+function logger(store) {
+  // Must point to the function returned by the previous middleware:
+  let next = store.dispatch
+
+  return function dispatchAndLog(action) {
+    console.log('dispatching', action)
+    let result = next(action)
+    console.log('next state', store.getState())
+    return result
+  }
+}
+```
+其本质就是将 middleware 串连起来!
+如果 ```applyMiddlewareByMonkeypatching``` 没有在处理完第一个 middleware 后立即给 ```store.dispatch``` 赋值, ```store.dispatch``` 就会保持指向原始的 ```dispatch``` 函数. 那么第二个 middleware 就能绑定到原始的 ```dispatch``` 函数上.
