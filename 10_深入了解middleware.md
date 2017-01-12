@@ -167,3 +167,42 @@ function logger(store) {
 ```
 其本质就是将 middleware 串连起来!
 如果 ```applyMiddlewareByMonkeypatching``` 没有在处理完第一个 middleware 后立即给 ```store.dispatch``` 赋值, ```store.dispatch``` 就会保持指向原始的 ```dispatch``` 函数. 那么第二个 middleware 就能绑定到原始的 ```dispatch``` 函数上.
+
+但这儿还有另外一种方式去串连. middleware 可以接受一个名为 ```next()``` 的 dispatch 函数参数而不是从 store 的实例读取 dispatch 函数:
+```js
+function logger(store) {
+    return function wrapDispatchToAddLogging(next) {
+        return function dispatchAndLog(action) {
+            console.log('dispatching', action)
+            let result = next(action)
+            console.log('next state', store.getState())
+            return result
+        }
+    }
+}
+```
+这是我们需要更进一步的时刻了. 因此可能需要花点时间去理解. 这种瀑布式的函数会令人感到一丝恐惧. ES6的箭头函数使得这样的 currying(柯里化) 看起来更容易点:
+```js
+const logger = store => next => action => {
+    console.log('dispatching', action)
+    let result = next(action)
+    console.log('next state', store.getState())
+    return result
+}
+
+const crashReporter = store => next => action => {
+    try {
+        return next(action)
+    } catch (err) {
+        console.error('Caught an exception!', err)
+        Raven.captureException(err, {
+            extra: {
+                action,
+                state: store.getState()
+            }
+        })
+        throw err
+    }
+}
+```
+这
