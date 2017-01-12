@@ -17,7 +17,9 @@
 // we end up having
 // A ---> middleware 1 ---> middleware 2 ---> middleware 3 --> ... ---> B
 ```
-总的来说 middleware 是一种运行在程序 A 部分和 B 部分之间, 用于将 A 发送给 B 的数据在传送给 B 之前先做一些转换的组件. 因此程序流程将不再是:
+总的来说 middleware 是一种运行在程序 A 部分和 B 部分之间的组件, 该组件用于将 A 发送给 B 的数据在传送给 B 之前先做一些转换. 
+
+因此程序流程将不再是:
 
   **A -----> B**
 
@@ -44,14 +46,14 @@
 // dispatch the real action when it wants to (or do nothing - this is a totally valid and
 // sometimes desired behavior).
 ```
-我们的 middleware 在每次 action 被分发的时候都会被调用,
-并且它能够在需要的时候帮助我们的action构造器去分发一个真实的action
+我们的 middleware 在每次 action (或者别的东西, 比如我们异步 action creator 中的函数)被分发的时候都会被调用,
+并且它能够在需要的时候帮助我们的 action creator 去分发一个真实的 action (也或者什么也不做 - 这是一个有效行为, 并且有时候也是我们所期望的行为)
 
 ```
 // In Redux, middleware are functions that must conform to a very specific signature and follow
 // a strict structure:
 ```
-在Redux中, 中间件就是一堆必须遵循特殊声明和规则的函数, 比如:
+在 Redux 中, middleware 就是一些必须遵循特殊签名和严格结构的函数:
 
 ```js
     var anyMiddleware = function ({ dispatch, getState }) {
@@ -73,21 +75,18 @@
 //     and can either trigger the next middleware (to let the action continue to flow) or process
 //     the action in any appropriate way.
 ```
-正如你在上面所看到的, 一个中间件由3个内嵌的函数组成(他们会被依次调用):
-* 第一层提供一个dispatch函数和getState函数作为参数(如果你的中间件或action构造器需要从状态中读取数据)给第二层的函数
-* 第二层会提供一个next函数参数给第三层,
-  该参数允许你显示地将变换后的输入交给下一层middleware或者Redux(以便Redux能最终调用到所有的reducers).
-* 第三层提供一个action参数, 该参数来自于前一个中间件或你自己dispatch函数,
-  并且能够触发下一个middleware或者正确地处理掉该action.
+正如你在上面所看到的, 一个 middleware 由3个内嵌的函数组成(他们将顺序地被调用):
+* 第一层为其他两层提供一个 dispatch 函数和 getState 函数(如果你的 middleware 或 action creator 需要从 state 中读取数据)
+* 第二层会提供一个 next 函数, 该函数允许你显示地将转换后的输入交给下一层 middleware 或 Redux(以便 Redux 能最终调用到所有的 reducers ).
+* 第三层提供一个 action 参数, 该参数来自于前一个 middleware 或你自己的 dispatch 函数, 然后要么触发下一个 middleware (以便 action 能继续的向前流动) 要么正确地处理掉该 action .
 
 ```
 // Those of you who are trained to functional programming may have recognized above an opportunity
 // to apply a functional pattern: currying (if you aren't, don't worry, skipping the next 10 lines
 // won't affect your Redux understanding). Using currying, you could simplify the above function like that:
 ```
-那些具有函数编程背景的人可能意识到有机会将一个函数编程范式应用到上述中:
-currying柯里化(如果你不知道，不用担心，可以跳过下面10行,
-这并不会影响到你对Redux的理解). 使用Currying, 就能将上述函数简化为:
+那些具有函数编程背景的人可能意会识到有机会将一个函数编程模式应用到上述描述中: currying 柯里化 (如果你不知道，也不用担心，跳过下面10行内容并不会影响你对 Redux 的理解). 使用 currying, 就能可以将上述函数简化为:
+
 ```js
     // "curry" may come from any functional programming library (lodash, ramda, etc.)
     var thunkMiddleware = curry(
@@ -102,9 +101,9 @@ currying柯里化(如果你不知道，不用担心，可以跳过下面10行,
 // its code is provided here: https://github.com/gaearon/redux-thunk.
 // Here is what it looks like (with function body translated to es5 for readability):
 ```
-我们将为我们异步action构造器所构建的middleware称为thunk middleware,
-可在https://github.com/gaearon/redux-thunk获取其代码.
-那么代码看起来就像这样了(为了易于阅读, 函数内部已转换成ES5的语法了):
+我们为异步 action creator 所构建的 middleware 被称为 thunk middleware , 可以从 https://github.com/gaearon/redux-thunk 获取其代码.
+
+我们的代码看起来就变成了这样(为了易于阅读, 函数内部已转换成ES5的语法了):
 
 ```js
 var thunkMiddleware = function ({ dispatch, getState }) {
@@ -125,8 +124,7 @@ var thunkMiddleware = function ({ dispatch, getState }) {
 // To tell Redux that we have one or more middlewares, we must use one of Redux's
 // helper functions: applyMiddleware.
 ```
-为了告诉Redux我们拥有一个或者多个middleware,
-我们必须使用Redux提供的辅助函数: applyMiddleware.
+为了告诉 Redux 我们拥有一个或者多个 middleware , 我们必须使用 Redux 提供的辅助函数: applyMiddleware.
 
 ```
 // "applyMiddleware" takes all your middlewares as parameters and returns a function to be called
@@ -134,8 +132,8 @@ var thunkMiddleware = function ({ dispatch, getState }) {
 // store that applies middleware to a store's dispatch".
 // (from https://github.com/rackt/redux/blob/v1.0.0-rc/src/utils/applyMiddleware.js)
 ```
-"applyMiddleware"接受你所有的middlewares并返回一个被Redux的createStore调用的函数.当该函数被调用的时候,
-它将生成一个"将middleware应用到其dispatch上个高阶Store".
+**applyMiddleware** 接受你所有的 middlewares 作为参数并返回一个能被 Redux 的 createStore 调用的函数. 当该函数被调用的时候,
+它将生成一个"高阶 store 用于将 middleware 应用到 store 的 dispatch 函数上".
 
 ```js
 // Here is how you would integrate a middleware into your Redux store:
@@ -172,7 +170,7 @@ const store_0 = finalCreateStore(reducer)
 //     speaker was called with state {} and action { type: '@@redux/PROBE_UNKNOWN_ACTION_s.b.4.z.a.x.a.j.o.r' }
 //     speaker was called with state {} and action { type: '@@redux/INIT' }
 ```
-运行程序将输出:
+运行后输出:
 ```js
      speaker was called with state {} and action { type: '@@redux/INIT' }
      speaker was called with state {} and action { type: '@@redux/PROBE_UNKNOWN_ACTION_s.b.4.z.a.x.a.j.o.r' }
@@ -206,7 +204,7 @@ store_0.dispatch(asyncSayActionCreator_1('Hi'))
 //     Mon Aug 03 2015 00:01:22 GMT+0200 (CEST) 'Dispatch action now:'
 //     speaker was called with state {} and action { type: 'SAY', message: 'Hi' }
 ```
-运行程序后输出:
+运行后输出:
 ```
      Mon Aug 03 2015 00:01:20 GMT+0200 (CEST) Running our async action creator:
      Mon Aug 03 2015 00:01:22 GMT+0200 (CEST) 'Dispatch action now:'
@@ -216,13 +214,13 @@ store_0.dispatch(asyncSayActionCreator_1('Hi'))
 ```
 // Our action is correctly dispatched 2 seconds after our call the async action creator!
 ```
-在调用异步action构造器2秒之后，我们的action被正确地分发了.
+在调用异步 action creator 2秒后，我们的 action 被正确地分发了.
 
 ```
 // Just for your curiosity, here is how a middleware to log all actions that are dispatched, would
 // look like:
 ```
-只是为了你的好奇心, 下面这个middleware说明了如何记录所有被分发的action:
+出于你的好奇, 下面这个 middleware 说明了如何记录所有被分发的 action:
 
 ```js
 function logMiddleware ({ dispatch, getState }) {
@@ -249,8 +247,7 @@ function discardMiddleware ({ dispatch, getState }) {
     }
 }
 ```
-同样, 下面这个middleware用于丢弃所有被分发的actions
-
+同样, 下面这个 middleware 用于丢弃所有被分发的 actions (如下这样不是很有用, 但多一点逻辑的话, 它就可以在将 actions 传入下一个 middleware 或者Redux 的时候选择性地丢弃一些 actions) 
 ```
 // Try to modify finalCreateStore call above by using the logMiddleware and / or the discardMiddleware
 // and see what happens...
@@ -258,20 +255,19 @@ function discardMiddleware ({ dispatch, getState }) {
 //     const finalCreateStore = applyMiddleware(discardMiddleware, thunkMiddleware)(createStore)
 // should make your actions never reach your thunkMiddleware and even less your reducers.
 ```
-试着用上面的logMiddleware和discardMiddleware去修改一下finalCreateStore的调用,
-看看会发生什么...
+试着用上面的 logMiddleware 和 discardMiddleware 去修改一下 finalCreateStore 的调用, 然后看看会发生什么...
 
-比如这样:
+比如这样调用:
 ```js
      const finalCreateStore = applyMiddleware(discardMiddleware, thunkMiddleware)(createStore)
 ```
-这将导致你的actions永远也到不了thunkMiddleware以及你的reducers函数.
+这将导致你的 actions 永远也运行不到 thunkMiddleware 甚至你的一些 reducers 函数.
 
 ```
 // See http://redux.js.org/docs/introduction/Ecosystem.html#middleware, section Middleware, to
 // see other middleware examples.
 ```
-查看...一节，可以看到别的middleware例子.
+在 Redux 文档的 [Middleware](http://redux.js.org/docs/introduction/Ecosystem.html#middleware) 这一节中，你可以看到一些其他的 middleware 例子.
 
 ```
 // Let's sum up what we've learned so far:
@@ -280,15 +276,14 @@ function discardMiddleware ({ dispatch, getState }) {
 // 3) We know how to handle custom actions like asynchronous actions thanks to middlewares
 ```
 总结一下我们目前已学到的:
-* 我们知道如何编写一个actions以及action构造器
-* 我们知道如何分发我们的actions
-* 我们知道如何处理自定制的actions,
-  比如像异步actions等，当然这都要感谢middleware这个好东西.
+* 我们知道了如何编写一个 actions 以及 action creator
+* 我们知道了如何分发我们的 actions
+* 我们知道了如何的处理定制的 actions , 比如像异步 actions 等，当然这都要感谢 middleware 这个好东西.
 
 ```
 // The only missing piece to close the loop of Flux application is to be notified about
 // state updates in order to react to them (by re-rendering our components for example).
 ```
-唯一一块Flux程序的环路中还没触及的相似部分就是有关State更新的通知消息以便做出对其做出响应(比如UI组件的重绘)
+对于 Flux 程序的完整闭环, 唯一所缺的一部分就是有关 state 更新的通知以便对其做出响应 (比如 UI 组件的重绘)
 
 
