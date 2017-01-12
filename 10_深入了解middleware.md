@@ -112,3 +112,35 @@ patchStoreToAddCrashReporting(store)
 
 ### 第4次尝试: 隐藏 Monkeypathcing
 
+Monkeypathcing是一种技巧. "替换任何你喜欢的方法", 这是一种什么 API 呢? 相反让我们看看其本质. 之前, 我们的函数替换掉了 ```store.dispatch```. 而如果他们返回的是一个新的 ```dispatch``` 函数呢?
+```js
+function logger(store) {
+    let next = store.dispatch
+
+    // 之前是替换掉store的dispatch
+    // store.dispatch = function dispatchAndLog(action) {
+
+    // 现在我们返回一个新的dispatch函数
+    return function dispatchAndLog(action) {
+        console.log('dispatching', action)
+        let result = next(action)
+        console.log('next state', store.getState())
+        return result
+    }
+}
+```
+我们可以在 Redux 内部提供一个帮助函数, 该函数会将我们之前所写的 monkeypatching 作为一个实现细节:
+```js
+// 慢慢开始接近 applyMiddleware 函数了
+function applyMiddlewareByMonkeypatching(store, middlewares) {
+    middlewares = middlewares.slice()
+    middlewares.reverse()
+
+    // 依次用每个 middleware 来转换 dispatch 函数.
+    middlewares.forEach(middleware =>
+        store.dispatch = middleware(store)
+    )
+}
+```
+
+然后我们可以如下这样将
