@@ -233,3 +233,41 @@ function applyMiddleware(store, middlewares) {
 * 为了保证你只应用了 middleware 一次. 它会作用在 ```createStore()``` 而非 store 自身上. 因而它的签名是 ```(...middlewares) => (createStore) => createStore``` 而不是 ```(store, middlewares) => store```.
 
 由于在使用之前将函数应用到 ```createStore()``` 有些繁琐, 所以 ```createStore()``` 可接受一个可选的末尾参数用于传入这些函数.
+
+### 最后的方法
+鉴于我们刚刚所写的 middlewares :
+```js
+const logger = store => next => action => {
+    console.log('dispatching', action)
+    let result = next(action)
+    console.log('next state', store.getState())
+    return result
+}
+
+const crashReporter = store => next => action => {
+    try {
+        return next(action)
+    } catch (err) {
+        console.error('Caught an exception!', err)
+        Raven.captureException(err, {
+            extra: {
+                action,
+                state: store.getState()
+            }
+        })
+        throw err
+    }
+}
+```
+下面是如何将它应用到 Redux ```store``` 的:
+```js
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+
+let todoApp = combineReducers(reducers)
+let store = createStore(
+    todoApp,
+    // applyMiddleware() tells createStore() how to handle middleware
+    applyMiddleware(logger, crashReporter)
+)
+```
+就是如此, 现在任何对于该 ```store``` 实例分发的 actions 都将经过 ```logger``` 和 ```crashReporter``` 两个 middlewares .
