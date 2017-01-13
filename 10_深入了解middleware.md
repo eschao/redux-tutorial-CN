@@ -7,7 +7,7 @@
 
 明白 middleware 的前因后果, 也是我们理解 Redux 设计和使用的一个重要的部分. 在本节中, 我会以翻译官方的 [Middleware](http://redux.js.org/docs/advanced/Middleware.html#) 一节为主并辅以我自己的浅薄理解尝试剖析一下 middleware , 希望能帮助你更进一步地理解 middleware.
 
-### 问题: 记录日志
+### 问题 1: 记录日志
 
 Redux 所带来的一个好处就是它让 state 的变更变得可预测且透明. 每次当 action 被分发的时候, 新的 state 就会被计算并保存下来. state 是不能被自身所改变的, 它只能随着特殊 action 的结果而改变.
 要是能记录下在程序中发生的每一个 action 和其后被计算的 state 是不是很好呢? 当某个环节出现问题的时候, 我们就能够回溯所有的日志, 然后找出是哪个 action 破坏了 state.
@@ -23,6 +23,7 @@ Redux 所带来的一个好处就是它让 state 的变更变得可预测且透�
 
 比如说, 你会这样的来创建一个 [todo](http://redux.js.org/docs/basics/ExampleTodoList.html) (官方文档中的待办事项例子):
 ```js
+// 发送一个'添加待办事项'的 action
 store.dispatch(addTodo('Use Redux'))
 ```
 为了记录下 action 和 state , 你可能会改成这样:
@@ -57,21 +58,24 @@ dispatchAndLog(store, addTodo('Use Redux'))
 
 如果我们只是替换掉 store 实例的 ```dispatch``` 函数会怎样呢? Redux 的 store 只不过是拥有一些方法的简单对象, 而因为我们使用的是 JavaScript , 因此我们能够 monkeypatch 掉 ```dispatch``` 的实现:
 ```js
-// 将原始
+// 先将原始的 dispatch 保存下来, 注意 'next' 变量名, 在后续改进中有一定的含义
 let next = store.dispatch
+
+// 将 dispatch 替换成我们写的可以记录日志的: dispatchAndLog
 store.dispatch = function dispatchAndLog(action) {
     console.log('dispatching', action)
-    let result = next(action)
+    // 在这里我们会调用原始的 dispatch 来真正的分发 action
+    let result = next(action)
     console.log('next state', store.getState())
     return result
 }
 ```
-这已经很接近我们想要的了! 无论我们在何处分发一个 action , 都能够保证记录下日志. Monkeypatching从来都不讨人喜欢, 但目前来说我们用着还好.
+这已经很接近我们想要的了! 无论我们在何处分发一个 action , 都能够保证日志被记录下来. Monkeypatching 从来都不讨人喜欢, 但目前我们用着还好.
 
-### 问题: Crash报告
+### 问题 2: Crash报告
 
-如果我们要对```dispatch```应用不止一个这样的转换又该怎么办呢?
-出现在我脑海中的不同作用的转换就是在产品中报告 JavaScript 的错误. 全局的 ```window.onerror``` 事件并不可靠这是因为在一些老的浏览器中它不能够提供堆栈信息, 而这些信息对我们明白错误为什么产生是至关重要的.
+如果我们要对```dispatch```应用添加不止一个这样的转换函数又该怎么办呢?
+出现在我脑海中的另一个有用的转换功能就是在产品中报告 JavaScript 的错误. 全局的 ```window.onerror``` 事件并不可靠,这是因为它在一些老的浏览器中无法提供堆栈信息, 而这些信息对于我们明白错误为什么产生是至关重要的.
 
 如果任何时候因分发一个 action 而抛出一个错误, 我们能像 [Sentry](https://getsentry.com/welcome/) 一样将堆栈信息, 导致错误的 action 以及当前的 state 一起发送给 crash 报告服务, 这样不是就有用了吗? 这样的话, 我们就可以在开发中重现该错误了.
 
