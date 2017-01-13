@@ -172,6 +172,15 @@ function applyMiddlewareByMonkeypatching(store, middlewares) {
 然后我们可以如下这样将其应用到多个 middleware 上:
 ```js
 applyMiddlewareByMonkeypatching(store, [ logger, crashReporter ])
+
+// 我们来看看当传入这些参数后, applyMiddlewareByMonkeypathcing内做了什么
+{
+    middlewares = middlewares.slice();
+    middlewares.reverse();
+    middlewares.forEach(middleware =>
+        store.dispatch = middleware(store)
+    );
+}
 ```
 然而, 这还是一个 monkeypatching. 我们将它隐藏在 Redux 库里的事实并没有改变其本质.
 
