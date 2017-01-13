@@ -2,7 +2,7 @@
 // Tutorial 10 - state-subscriber.js
 ```
 
-## 10 - State 订阅者
+## 11 - State 订阅者
 
 ```
 // We're close to having a complete Flux loop but we still miss one critical part:
