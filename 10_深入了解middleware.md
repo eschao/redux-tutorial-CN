@@ -3,13 +3,13 @@
 在上一节中我们简单的介绍了 middleware 并展示了其基本的用法. 但我们可能会疑惑: 
 * 为什么 middleware 函数要遵循那样的签名及结构? 
 * 为什么 middleware 需要三层函数? 
-* Redux 的 applyMiddleware 函数到底又做了什么?
+* Redux 的 ```applyMiddleware``` 函数到底又做了什么?
 
-明白 middleware 的前因后果, 也是我们理解 Redux 设计和使用的一个重要的部分. 在本节中, 我会以翻译官方的 [Middleware](http://redux.js.org/docs/advanced/Middleware.html#) 一节为主并辅以我自己的浅薄理解尝试剖析一下 middleware , 希望能帮助你更进一步地理解 middleware.
+明白 middleware 的前因后果, 也是我们使用和理解 Redux 的一个重要的部分. 在本节中, 我会以翻译官方的 [Middleware](http://redux.js.org/docs/advanced/Middleware.html#) 一节为主并辅以我自己的浅薄理解去尝试剖析一下 middleware , 希望能帮助你更进一步地理解 middleware.
 
 ### 问题 1: 记录日志
 
-Redux 所带来的一个好处就是它让 state 的变更变得可预测且透明. 每次当 action 被分发的时候, 就会计算出新的 state 并保存下来. state 是不能被自身所改变的, 它只能随着特定 action 的结果而改变.
+Redux 所带来的一个好处就是它让 state 的更改变得可预测且透明. 每次当 action 被分发的时候, 就会计算出新的 state 并保存下来. state 是不能被自身所改变的, 它只能随着特定 action 的结果而改变.
 要是能记录下在程序中发生的每一个 action 和其后被计算的 state 是不是很好呢? 当某个环节出现问题的时候, 我们就能够回溯所有的日志, 然后找出是哪个 action 破坏了 state.
 
 我们该如何借助 Redux 来实现呢?
@@ -40,7 +40,7 @@ console.log('next state', store.getState())
 
 ### 第2次尝试: 包装 Dispatch
 
-你可以将日志记录部分提取出来放在一个函数里:
+你可以将日志记录部分提取出来并放在一个函数里:
 ```js
 function dispatchAndLog(store, action) {
     console.log('dispatching', action)
@@ -54,9 +54,9 @@ dispatchAndLog(store, addTodo('Use Redux'))
 ```
 我们可以就此结束, 但每次都要导入一个特殊的函数是十分不方便的.
 
-### 第3次尝试: 对 Dispatch 打 "猴子补丁"
+### 第3次尝试: 给 Dispatch 打 "猴子补丁"
 
-如果我们只是替换掉 store 实例的 ```dispatch``` 函数会怎样呢? Redux 的 store 只不过是拥有一些方法的简单对象, 而因为我们使用的是 JavaScript , 因此我们能够 monkeypatch 掉 ```dispatch``` 的实现:
+如果我们只是替换掉 store 实例的 ```dispatch``` 函数会怎样呢? Redux 的 store 只不过是拥有一些方法的简单对象, 而由于我们使用的是 JavaScript , 所以我们能够 monkeypatch 掉 ```dispatch``` 的实现:
 ```js
 // 先将原始的 dispatch 保存下来, 注意 'next' 变量名, 在后续改进中有一定的含义
 let next = store.dispatch
@@ -70,16 +70,16 @@ store.dispatch = function dispatchAndLog(action) {
     return result
 }
 ```
-这已经很接近我们想要的了! 无论我们在何处分发一个 action , 都能够保证日志被记录下来. Monkeypatching 从来都不讨人喜欢, 但目前我们用着还好.
+这已经很接近我们想要的了! 无论我们在何处分发一个 action , 都能够保证日志被记录下来. 虽然 Monkeypatching 从来都不讨人喜欢, 但目前我们用着还好.
 
 ### 问题 2: Crash报告
 
 如果我们要对 ```dispatch``` 添加不止一个这样的转换函数又该怎么办呢?
-我想到的另一个有用的转换功能就是在产品中报告 JavaScript 的错误. 全局的 ```window.onerror``` 事件并不可靠,这是因为它在一些老的浏览器中无法提供堆栈信息, 而这些信息对于我们明白错误为什么产生是至关重要的.
+我想到的另一个有用的转换功能就是在产品中上报 JavaScript 的错误. 然而全局的 ```window.onerror``` 事件并不可靠, 这是因为它在一些老的浏览器中无法提供堆栈信息, 而这些信息对于我们明白错误为什么产生是至关重要的.
 
 如果对于任何时候因分发一个 action 而抛出的一个错误, 我们能像 [Sentry](https://getsentry.com/welcome/) 一样将堆栈信息, 导致错误的 action 以及当前的 state 一起发送给 crash 报告服务, 不就有用了吗? 这样的话, 我们就可以在开发中重现该错误了.
 
-然而, 保持分离日志和 crash 报告功能是很重要的. 理想情况下, 我们想让它们成为不同的模块, 并可能位于不同的包中. 否则我们就无法拥有如此的工具生态系统. (提示: 我们正在慢慢地接近什么是 middleware!)
+不过, 保持分离日志和 crash 报告功能是很重要的. 理想情况下, 我们想让它们成为不同的模块, 并可能位于不同的包中. 否则我们就无法拥有如此的工具生态系统. (提示: 我们正在慢慢地接近什么是 middleware!)
 
 如果日志和 crash 报告是两个独立的工具函数, 它们看起来可能像这样:
 ```js
@@ -125,7 +125,7 @@ patchStoreToAddCrashReporting(store)
 
 Monkeypathcing有点多余. "替换任何你喜欢的方法", 该是一种什么 API 呢? 相反让我们看看其本质. 之前, 我们的函数替换掉了 ```store.dispatch```. 而如果他们返回的是一个新的 ```dispatch``` 函数呢?
 >##### 注意
-此处开始逐步的将 '替换 dispatch' 方式转换为 '三层内嵌函数', 并引出 'applyMiddleware' 函数及其作用
+此处开始逐步的将 '替换 dispatch' 方式转换为 '三层内嵌函数', 并引出 'applyMiddleware' 函数及其实现
 
 ```js
 function logger(store) {
@@ -242,11 +242,11 @@ applyMiddlewareByMonkeypatching(store, [ logger, crashReporter ])
      let next = store.dispatch;
 }
 ```
-然而, 这还是一个 monkeypatching. 我们将它隐藏在 Redux 库里的事实并没有改变其本质.
+然而, 这还是一个 monkeypatching. 我们将它隐藏在 Redux 框架里的事实并没有改变其本质.
 
 ### 第5次尝试: 移除 Monkeypathcing
 
-为什么我们要覆盖掉 ```dispatch``` 函数呢? 当然是为了之后能调用 middleware 的 dispatch. 但还有另外一个原因: 就是为了让每个 middleware 都能访问被包装的 ```store.dispatch``` :
+为什么我们要覆盖掉 ```dispatch``` 函数呢? 当然是为了之后能调用 middleware 的 dispatch 函数. 但还有另外一个原因: 就是为了让每个 middleware 都能访问被包装的 ```store.dispatch``` :
 ```js
 function logger(store) {
   // 准备要去掉这一行了, 注意 store.dispatch 不一定就是原始的 dispatch 函数, 如上分析, 它可能是上一层 middleware 的 dispatch 函数
@@ -260,7 +260,7 @@ function logger(store) {
   }
 }
 ```
-其本质就是将 middleware 串连了起来!
+本质其实就是将 middleware 串连了起来!
 如果 ```applyMiddlewareByMonkeypatching``` 没有在处理完第一个 middleware 后立即给 ```store.dispatch``` 赋值, ```store.dispatch``` 就会保持指向原始的 ```dispatch``` 函数. 那么第二个 middleware 就能绑定到原始的 ```dispatch``` 函数上.
 
 但这儿还有另外一种方式去串连. middleware 可以接受一个参数名为 ```next()``` 的 dispatch 函数而不是从 store 的实例读取 dispatch 函数:
@@ -317,7 +317,7 @@ const crashReporter = store => next => action => {
 
 ### 第6次尝试: 天真地应用 Middleware
 
-与 ```applyMiddlewareByMonkeypatching()``` 不同的是, 我们会写一个新的 ```applyMiddleware()``` 主要用于获得一个最终的完全包装好的 ```dispatch``` 函数, 并返回一个拷贝的 store 用来调用 dispatch 函数 (此处同样遵守函数编程的准则, 由于要改变 store.dispatch , 因而返回的是一个 store 的拷贝保证传入的 store 参数没有被修改):
+与 ```applyMiddlewareByMonkeypatching()``` 不同的是, 我们会写一个新的 ```applyMiddleware()``` 函数, 主要用于获得一个最终的完全包装好的 ```dispatch``` 函数, 并返回一个拷贝的 store 用来调用 dispatch 函数 (此处同样遵守函数编程的准则, 由于要改变 store.dispatch , 因而返回的是一个 store 的拷贝保证传入的 store 参数没有被修改):
 ```js
 // Warning: Naïve implementation!
 // That's *not* Redux API.
@@ -350,7 +350,7 @@ function applyMiddleware(store, middlewares) {
 ```
 这与 Redux 自带的 ```applyMiddleware()``` 实现基本相同. 但在以下三个重要方面有所不同:
 * 对于 middleware, 它只暴露了 store API 中的一部分: ```dispatch(action)``` 和 ```getState()```.
-* 它使用了一点点手段用于确保, 如果你是从你的 middleware 而非 ```next(action)``` 函数上去调用 ```store.dispatch(action)``` , 那么 action 实际就能再次穿越整个 middleware 链, 也包含当前的 middleware . 这对于异步方式的 middleware 很有用.
+* 它使用了一点点手段用于确保: 如果你是从你的 middleware 而非 ```next(action)``` 函数上去调用 ```store.dispatch(action)``` , 那么 action 实际就能再次穿越整个 middleware 链, 也包含当前的 middleware . 这对于异步方式的 middleware 很有用.
 * 为了保证你只应用了 middleware 一次. 它会作用在 ```createStore()``` 而非 store 自身上. 因而它的签名是 ```(...middlewares) => (createStore) => createStore``` 而不是 ```(store, middlewares) => store```.
 
 由于在使用之前将 middleware 函数应用到 ```createStore()``` 上有些繁琐, 所以 ```createStore()``` 可以接受一个可选的末尾参数用于传入这些函数.
@@ -380,7 +380,7 @@ const crashReporter = store => next => action => {
     }
 }
 ```
-下面是如何将它应用到 Redux ```store``` 的:
+下面是如何将它应用到 Redux 的 ```store``` 上:
 ```js
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 
@@ -391,4 +391,4 @@ let store = createStore(
     applyMiddleware(logger, crashReporter)
 )
 ```
-就是如此, 现在任何对于该 ```store``` 实例分发的 actions 都将经过 ```logger``` 和 ```crashReporter``` 两个 middlewares .
+就是这样! 现在任何对于该 ```store``` 实例分发的 actions 都将经过 ```logger``` 和 ```crashReporter``` 两个 middlewares .
