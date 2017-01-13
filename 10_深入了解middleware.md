@@ -2,42 +2,44 @@
 
 在上一节中我们简单的介绍了 middleware 并展示了其基本的用法. 但我们可能会疑惑: 
 * 为什么 middleware 函数要遵循那样的签名及结构? 
-* 为什么需要三层函数? 
-* Redux 支持 middleware 的 applyMiddleware 函数到底又做了什么?
+* 为什么 middleware 需要三层函数? 
+* Redux 的 applyMiddleware 函数到底又做了什么?
 
-明白 middleware 的前因后果, 是我们理解 Redux 设计的一个很重要的部分. 在本节中, 我会以翻译官方的 Middleware 一节为主并辅以我自己的理解来解析 middleware , 希望能让你更深入一步地了解 middleware.
+明白 middleware 的前因后果, 也是我们理解 Redux 设计和使用的一个重要的部分. 在本节中, 我会以翻译官方的 [Middleware](http://redux.js.org/docs/advanced/Middleware.html#) 一节为主并辅以我自己的浅薄理解尝试剖析一下 middleware , 希望能帮助你更进一步地理解 middleware.
 
 ### 问题: 记录日志
 
-Redux 的带来的一个好处就是它使得 state 的变更是可预测且透明的. 每次当 action 被分发的时候, 新的 state 就会被计算并保存下来. state是不能被自身所改变的, 它只能因特殊 action 的结果而改变.
-要是能记录下在程序中发生的每一个 action 和其后被计算的 state 是不是很好呢? 当某个地方出现问题的时候, 我们就能够回溯所有的日志, 然后找出是哪个 action 破坏了 state.
+Redux 所带来的一个好处就是它让 state 的变更变得可预测且透明. 每次当 action 被分发的时候, 新的 state 就会被计算并保存下来. state 是不能被自身所改变的, 它只能随着特殊 action 的结果而改变.
+要是能记录下在程序中发生的每一个 action 和其后被计算的 state 是不是很好呢? 当某个环节出现问题的时候, 我们就能够回溯所有的日志, 然后找出是哪个 action 破坏了 state.
 
-我们该如何使用 Redux 来做到呢?
+我们该如何借助 Redux 来实现呢?
 
 ### 首次尝试: 手工记录
 
-最笨的方法就是在每次调用``` store.dispatch(action)```之后你手工的记录下 action 以及下一个 state. 这并非真正的解决方案, 但却向理解问题迈出了第一步.
+最天真的方法就是在每次调用 ``` store.dispatch(action)``` 之后你手工的记录下 action 以及下一个 state. 这并非真正的解决方案, 而只是理解问题的第一步.
 
 >##### 注意
-如果你正在使用 react-redux 或其他类似的绑定框架, 你可能不会在你的组件里直接的访问 store 实例. 因而对于接下来的内容, 假定你显示的将 store 实例传递了下来
+如果你正在使用 [react-redux](https://github.com/gaearon/react-redux) 或其他类似的绑定框架, 你可能不会在你的组件里直接的访问 store 实例. 因而对于接下来的内容, 假定你显示地将 store 实例传递了下来
 
-比如说, 你会这样的来创建一个 todo:
+比如说, 你会这样的来创建一个 [todo](http://redux.js.org/docs/basics/ExampleTodoList.html) (官方文档中的待办事项例子):
 ```js
 store.dispatch(addTodo('Use Redux'))
 ```
-为了记录 action 和 state , 你可能会改成这样:
+为了记录下 action 和 state , 你可能会改成这样:
 ```js
 let action = addTodo('Use Redux')
 
+// 分发前记录 action 对象
 console.log('dispatching', action)
 store.dispatch(action)
+// 分发后记录 store 实例
 console.log('next state', store.getState())
 ```
-这些代码能达到期望的效果, 但你不会想每次都这么做.
+这些代码能达到期望的效果, 但你不会每次都想这么写.
 
-### 第二次尝试: 包装 Dispatch
+### 第2次尝试: 包装 Dispatch
 
-你可以将日志部分提取出来放在一个函数:
+你可以将日志记录部分提取出来放在一个函数里:
 ```js
 function dispatchAndLog(store, action) {
     console.log('dispatching', action)
@@ -45,15 +47,17 @@ function dispatchAndLog(store, action) {
     console.log('next state', store.getState())
 }
 ```
-然后你可以在任何的地方用 ```dispatchAndLog``` 来代替 ```store.dispatch()```:
+然后你就可以在任何的地方用 ```dispatchAndLog``` 来代替 ```store.dispatch()``` 了:
 ```js
 dispatchAndLog(store, addTodo('Use Redux'))
 ```
 我们可以就此结束, 但每次都要导入一个特殊的函数是十分不方便的.
 
-### 第三次尝试: 对 Dispatch 打 "猴子补丁"
-如果我们只是替换掉 store 实例的 ```dispatch``` 函数会怎样呢? Redux 的 store 只不过是拥有一些方法的简单对象, 而因为我们使用的是 javascript , 因此我们能够 monkeypatch 掉 ```dispatch``` 的实现:
+### 第3次尝试: 对 Dispatch 打 "猴子补丁"
+
+如果我们只是替换掉 store 实例的 ```dispatch``` 函数会怎样呢? Redux 的 store 只不过是拥有一些方法的简单对象, 而因为我们使用的是 JavaScript , 因此我们能够 monkeypatch 掉 ```dispatch``` 的实现:
 ```js
+// 将原始
 let next = store.dispatch
 store.dispatch = function dispatchAndLog(action) {
     console.log('dispatching', action)
