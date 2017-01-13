@@ -125,18 +125,21 @@ patchStoreToAddCrashReporting(store)
 
 Monkeypathcing有点多余. "替换任何你喜欢的方法", 该是一种什么 API 呢? 相反让我们看看其本质. 之前, 我们的函数替换掉了 ```store.dispatch```. 而如果他们返回的是一个新的 ```dispatch``` 函数呢?
 >##### 注意
+此处开始逐步的将 '替换 dispatch' 方式转换为 '三层内嵌函数', 并引出 'applyMiddleware' 函数及其作用
 
 ```js
 function logger(store) {
     let next = store.dispatch
 
-    // 之前是替换掉store的dispatch
+    // 注释掉之前 '替换 dispatch' 的方式, 改成返回一个新的 dispatch 函数
     // store.dispatch = function dispatchAndLog(action) {
 
     // 现在我们返回一个新的dispatch函数
     return function dispatchAndLog(action) {
         console.log('dispatching', action)
-        let result = next(action)
+        
+        // next 即是原有的 store.dispatch 
+        let result = next(action)
         console.log('next state', store.getState())
         return result
     }
@@ -146,13 +149,23 @@ function logger(store) {
 ```js
 // 慢慢开始接近 applyMiddleware 函数了
 function applyMiddlewareByMonkeypatching(store, middlewares) {
-    middlewares = middlewares.slice()
-    middlewares.reverse()
+    // middlewares 是一个数组, 包含你所传入的所有 middleware, 此处相当于复制一份
+    middlewares = middlewares.slice();
+    
+    // 将数组按顺序颠倒, 这应该是为什么要先复制一份的原因, 保证原有的middlewares数组不会改变, 这也是函数编程的思想:
+    // 不改变传入的参数值, 至于为什么要颠倒数组顺序, 将用于下面的串连替换 dispatch
+    middlewares.reverse();
 
-    // 依次用每个 middleware 来转换 dispatch 函数.
-    middlewares.forEach(middleware =>
+    // 依次用每个 middleware 来转换 dispatch 函数. 这是applyMiddleware的关键, 也跟 middleware 三层函数相关
+    // forEach接受的是一个函数作为参数, 然后对每个数组的元素调用该函数来处理. 这里使用了ES6的新语法: 箭头函数
+    // 下面这段代码相当于:
+    // middlewares.forEach( function(middleware) {
+    //     store.dispatch = middleware(store);
+    // });
+    // 只不过箭头函数表达方式更简洁 
+    middlewares.forEach(middleware =>
         store.dispatch = middleware(store)
-    )
+    );
 }
 ```
 
