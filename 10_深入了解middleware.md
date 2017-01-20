@@ -14,9 +14,9 @@ Redux 所带来的一个好处就是它让 state 的更改变得可预测且透�
 
 我们该如何借助 Redux 来实现呢?
 
-### 首次尝试: 手工记录
+### 首次尝试: 手动记录
 
-最天真的方法就是在每次调用 ``` store.dispatch(action)``` 之后你手工的记录下 action 以及下一个 state. 这并非真正的解决方案, 而只是理解问题的第一步.
+最简单的方法就是在每次调用 ``` store.dispatch(action)``` 之后你手动地记录下 action 以及下一个 state. 这并非真正的解决方案, 而只是理解问题的第一步.
 
 >##### 注意
 如果你正在使用 [react-redux](https://github.com/gaearon/react-redux) 或其他类似的绑定框架, 你可能不会在你的组件里直接访问 store 实例. 因而对于接下来的内容, 假定你显示地将 store 实例传递了下来
@@ -38,7 +38,7 @@ console.log('next state', store.getState())
 ```
 这些代码能达到期望的效果, 但你不会每次都想这么写.
 
-### 第2次尝试: 包装 Dispatch
+### 第2次尝试: 封装 Dispatch
 
 你可以将日志记录部分提取出来并放在一个函数里:
 ```js
@@ -54,11 +54,12 @@ dispatchAndLog(store, addTodo('Use Redux'))
 ```
 我们可以就此结束, 但每次都要导入一个特殊的函数是十分不方便的.
 
-### 第3次尝试: 给 Dispatch 打 "猴子补丁"
+### 第3次尝试: Monkeypatch Dispatch
 
 如果我们只是替换掉 store 实例的 ```dispatch``` 函数会怎样呢? Redux 的 store 只不过是拥有一些方法的简单对象, 而由于我们使用的是 JavaScript , 所以我们能够 monkeypatch 掉 ```dispatch``` 的实现:
 ```js
-// 先将原始的 dispatch 保存下来, 注意 'next' 变量名, 在后续改进中有一定的含义
+// 先将原始的 dispatch 保存下来, 注意 'next' 变量名, 
+// 在后续改进中有一定的含义
 let next = store.dispatch
 
 // 将 dispatch 替换成我们写的可以记录日志的: dispatchAndLog
@@ -172,15 +173,20 @@ function crashReporter(store) {
 ```js
 // 慢慢开始接近 applyMiddleware 函数了
 function applyMiddlewareByMonkeypatching(store, middlewares) {
-    // middlewares 是一个数组, 包含你所传入的所有 middleware, 此处相当于复制一份
+    // middlewares 是一个数组, 包含你所传入的所有 middleware, 
+    // 此处相当于复制一份
     middlewares = middlewares.slice();
     
-    // 将数组按顺序颠倒, 这应该是为什么要先复制一份的原因, 保证原有的middlewares数组不会改变, 这也是函数编程的思想:
-    // 不改变传入的参数值, 至于为什么要颠倒数组顺序, 将用于下面的串连替换 dispatch
+    // 将数组按顺序颠倒, 这应该是为什么要先复制一份的原因, 保证
+    // 原有的middlewares数组不会改变, 这也是函数编程的思想:
+    // 不改变传入的参数值, 至于为什么要颠倒数组顺序, 将用于下面
+    // 的串连替换 dispatch
     middlewares.reverse();
 
-    // 依次用每个 middleware 来转换 dispatch 函数. 这是applyMiddleware的关键, 也跟 middleware 三层函数相关
-    // forEach接受的是一个函数作为参数, 然后对每个数组的元素调用该函数来处理. 这里使用了ES6的新语法: 箭头函数
+    // 依次用每个 middleware 来转换 dispatch 函数. 这是
+    // applyMiddleware的关键, 也跟 middleware 三层函数相关
+    // forEach接受的是一个函数作为参数, 然后对每个数组的元素调
+    // 用该函数来处理. 这里使用了ES6的新语法: 箭头函数
     // 下面这段代码相当于:
     // middlewares.forEach( function(middleware) {
     //     store.dispatch = middleware(store);
@@ -200,27 +206,35 @@ applyMiddlewareByMonkeypatching(store, [ logger, crashReporter ])
 {
     
     middlewares = middlewares.slice(); 
-    // 运行后 middlewares 内容还是 [logger, crashReporter], 只不过是复制的一份, 保证不会导致参数被修改
+    // 运行后 middlewares 内容还是 [logger, crashReporter], 
+    // 只不过是复制的一份, 保证不会导致参数被修改
     
     middlewares.reverse();
-    // 将 middlewares 数组反转后, 数组就变成了[crashReporter, logger]
+    // 将 middlewares 数组反转后, 数组就变成了
+    // [crashReporter, logger]
     
     middlewares.forEach(middleware =>
         store.dispatch = middleware(store)
     );
-    // 遍历数组中每个元素, 首先是 crashReporter, 其次是logger
-    // 还记得上面logger, crashReporter函数吗？ 
-    // 两个函数中都有先将 store.dispatch 保存在一个 next 变量中, 我们看看它如何在此循环中变化的
+    // 遍历数组中每个元素, 首先是 crashReporter, 其次
+    // 是logger还记得上面logger, crashReporter函数吗？ 
+    // 两个函数中都有先将 store.dispatch 保存在一个 next 
+    // 变量中, 我们看看它如何在此循环中变化的
     
     // 1. 先作用在 crashReporter 上, 相当于执行的是:
     store.dispatch = crashReporter(store);
-    // 运行后等于: store.dispatch 被替换成 dispatchAndReportErrors(actions); 而这时候dispatchAndReportErrors中的 next 指向的是
-    // 原始的 store.dispatch
+    // 运行后等于: store.dispatch 被替换成 
+    // dispatchAndReportErrors(actions); 而这时候
+    // dispatchAndReportErrors中的 next 指向的是原始的 
+    // store.dispatch
     
     // 2. 作用在 logger 上:
     store.dispatch = logger(store);
-    // 运行后等于: store.dispatch 被替换成 dispatchAndLog(actions); 由于crashReporter先执行导致store.dispatch已被替换成
-    // dispatchAndReportErrors函数, 所以 dispatchAndLog中的 next 指向的则是 dispatchAndReportErrors
+    // 运行后等于: store.dispatch 被替换成 
+    // dispatchAndLog(actions); 由于
+    // crashReporter先执行导致store.dispatch已被替换成
+    // dispatchAndReportErrors函数, 所以 
+    // dispatchAndLog中的 next 指向的则是 dispatchAndReportErrors
     
     // 那么数组遍历完后 store.dispatch 实际变成了这样(展开):
     store.dispatch = dispatchAndLog(actions) {
@@ -234,11 +248,16 @@ applyMiddlewareByMonkeypatching(store, [ logger, crashReporter ])
         }
         ...
      }
-     // 如此就形成了一个链式的函数调用, 在函数的最里层是最原始的 store.dispatch 调用, 然后依次是从数组最左边的 middleware 开始调用, 
-     // 每一层对应一个 middleware 的 dispatch 函数, 最外层就是数组中第一个 middlerware 的 dispatch 函数, 且该函数也被赋给当前的
+     // 如此就形成了一个链式的函数调用, 在函数的最里层是最
+     // 原始的 store.dispatch 调用, 然后依次是从数组最左
+     // 边的 middleware 开始调用, 每一层对应一个 middleware 
+     // 的 dispatch 函数, 最外层就是数组中第一个 middlerware 
+     // 的 dispatch 函数, 且该函数也被赋给当前的
      // store.dispatch. 这也是为什么要把数组先做个反转后再执行. 
-     // 那么这就是最终的 applyMiddleware 函数的实现吗？ 还不是, 因为还传入的 middleware 还不是一个三层函数, 虽然大体上已经一致了,
-     // 但在语法上还可以在精简一下, 这就是接下来为什么要去掉如下这句:
+     // 那么这就是最终的 applyMiddleware 函数的实现吗？ 还不是, 
+     // 因为还传入的 middleware 还不是一个三层函数, 虽然大体上已
+     // 经一致了, 但在语法上还可以在精简一下, 这就是接下来为什么要
+     // 去掉如下这句:
      let next = store.dispatch;
 }
 ```
@@ -249,7 +268,9 @@ applyMiddlewareByMonkeypatching(store, [ logger, crashReporter ])
 为什么我们要覆盖掉 ```dispatch``` 函数呢? 当然是为了之后能调用 middleware 的 dispatch 函数. 但还有另外一个原因: 就是为了让每个 middleware 都能访问被包装的 ```store.dispatch``` :
 ```js
 function logger(store) {
-  // 准备要去掉这一行了, 注意 store.dispatch 不一定就是原始的 dispatch 函数, 如上分析, 它可能是上一层 middleware 的 dispatch 函数
+  // 准备要去掉这一行了, 注意 store.dispatch 不一定
+  // 就是原始的 dispatch 函数, 如上分析, 它可能是上一
+  // 层 middleware 的 dispatch 函数
   let next = store.dispatch
 
   return function dispatchAndLog(action) {
@@ -266,8 +287,10 @@ function logger(store) {
 但这儿还有另外一种方式去串连. middleware 可以接受一个参数名为 ```next()``` 的 dispatch 函数而不是从 store 的实例读取 dispatch 函数:
 ```js
 function logger(store) {
-    // 结合上述对 applyMiddlewareByMonkeypatching 的分析, 在那个循环中, 我们不再返回 dispatchAndLog 而是返回一个 
-    // wrapDispatchToAddLogging 函数. 这样之后 next 参数如何传入呢? 且看后续对 applyMiddleware 的变动.
+    // 结合上述对 applyMiddlewareByMonkeypatching 的分析, 
+    // 在那个循环中, 我们不再返回 dispatchAndLog 而是返回一个 
+    // wrapDispatchToAddLogging 函数. 这样之后 next 参数如
+    // 何传入呢? 且看后续对 applyMiddleware 的变动.
     return function wrapDispatchToAddLogging(next) {
         return function dispatchAndLog(action) {
             console.log('dispatching', action)
@@ -315,7 +338,7 @@ const crashReporter = store => next => action => {
 
 现在 middleware 接受 ```next()``` 函数 (实际是一个 dispatch 函数) 作为参数, 并返回一个新的 dispatch 函数, 然后从左开始依次将其作为 ```next()``` 传给下一个 middleware 等等. 而 store 被保留下来作为一个顶层的参数, 用于访问类似 ```getState()``` 这样的方法.
 
-### 第6次尝试: 天真地应用 Middleware
+### 第6次尝试: "单纯地"应用 Middleware
 
 与 ```applyMiddlewareByMonkeypatching()``` 不同的是, 我们会写一个新的 ```applyMiddleware()``` 函数, 主要用于获得一个最终的完全包装好的 ```dispatch``` 函数, 并返回一个拷贝的 store 用来调用 dispatch 函数 (此处同样遵守函数编程的准则, 由于要改变 store.dispatch , 因而返回的是一个 store 的拷贝保证传入的 store 参数没有被修改):
 ```js
@@ -392,48 +415,3 @@ let store = createStore(
 )
 ```
 就是这样! 现在任何对于该 ```store``` 实例分发的 actions 都将经过 ```logger``` 和 ```crashReporter``` 两个 middlewares .
-
-### Thunk Middlware
-最后我们再分析一下上一节中提到的 **Thunk Middleware** , 看看它是如何完成一个异步分发的 action
-
-Thunk Middleware 的源码很简单, 只有短短的 10 来行, 如下:
-```js
-function createThunkMiddleware(extraArgument) {
-  return ({ dispatch, getState }) => next => action => {
-    if (typeof action === 'function') {
-      return action(dispatch, getState, extraArgument);
-    }
-
-    return next(action);
-  };
-}
-
-const thunk = createThunkMiddleware();
-```
-
-在上一节中, 我们的 reducer 函数如下:
-```js
-var reducer = combineReducers({
-    speaker: function (state = {}, action) {
-        console.log('speaker was called with state', state, 'and action', action)
-
-        switch (action.type) {
-            case 'SAY':
-                return {
-                    ...state,
-                    message: action.message
-                }
-            default:
-                return state
-        }
-    }
-})
-```
-然后, 我们用 createStore 来创建 store:
-```js
-let store = createStore( 
-    reducer, 
-    applyMiddleware(logger, thunk)
-);
-```
-此处, 我们用了2个 middleware , 一个 logger, 一个 thunk, 我们将
