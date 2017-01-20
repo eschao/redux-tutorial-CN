@@ -395,6 +395,7 @@ let store = createStore(
 
 ### Thunk Middlware
 最后我们再分析一下上一节中提到的 **Thunk Middleware** , 看看它是如何完成一个异步分发的 action
+
 Thunk Middleware 的源码很简单, 只有短短的 10 来行, 如下:
 ```js
 function createThunkMiddleware(extraArgument) {
@@ -435,4 +436,4 @@ let store = createStore(
     applyMiddleware(logger, thunk)
 );
 ```
-此处, 我们用
+此处, 我们用了2个 middleware , 一个 logger, 一个 thunk, 我们将
