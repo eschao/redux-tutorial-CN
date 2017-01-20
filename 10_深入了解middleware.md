@@ -392,3 +392,47 @@ let store = createStore(
 )
 ```
 就是这样! 现在任何对于该 ```store``` 实例分发的 actions 都将经过 ```logger``` 和 ```crashReporter``` 两个 middlewares .
+
+### Thunk Middlware
+最后我们再分析一下上一节中提到的 **Thunk Middleware** , 看看它是如何完成一个异步分发的 action
+Thunk Middleware 的源码很简单, 只有短短的 10 来行, 如下:
+```js
+function createThunkMiddleware(extraArgument) {
+  return ({ dispatch, getState }) => next => action => {
+    if (typeof action === 'function') {
+      return action(dispatch, getState, extraArgument);
+    }
+
+    return next(action);
+  };
+}
+
+const thunk = createThunkMiddleware();
+```
+
+在上一节中, 我们的 reducer 函数如下:
+```js
+var reducer = combineReducers({
+    speaker: function (state = {}, action) {
+        console.log('speaker was called with state', state, 'and action', action)
+
+        switch (action.type) {
+            case 'SAY':
+                return {
+                    ...state,
+                    message: action.message
+                }
+            default:
+                return state
+        }
+    }
+})
+```
+然后, 我们用 createStore 来创建 store:
+```js
+let store = createStore( 
+    reducer, 
+    applyMiddleware(logger, thunk)
+);
+```
+此处, 我们用
