@@ -19,7 +19,7 @@
 // called, it is passed the state that needs to be updated. This way, Redux's stores became
 // "stateless stores" and were renamed reducers.
 ```
-说一说 reducer 与 store 区别吧:
+说一说 reducer 与 store 的区别吧:
 
 你或许已注意到, 在[简介一节](0_简介.md)所展现的那张 Flux 图表中, 我们有一个 "Store" , 而不是 Redux 所期望的 "Reducer" . 那么到底 Store 与 Reducer 有何不同呢?
 
