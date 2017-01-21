@@ -23,12 +23,12 @@
 
 你或许已注意到, 在[简介一节](0_简介.md)所展现的那张 Flux 图表中, 我们有一个 "Store" , 而不是 Redux 所期望的 "Reducer" . 那么到底 Store 与 Reducer 有何不同呢?
 
-这要比你想象的更简单: Store 会保存你的数据而 Reducer 则不会. 因此在传统的 Flux 中 stores 持有 state , 而在 Redux 中每次 reducer 被调用时, 它 (reducer) 就被传入一个需要被更新的 state . 以此类推, Redux 的 stores 就变成了一个 "无状态的 stores" 并改名为 reducers.
+这要比你想象的更简单: Store 会保存你的数据而 Reducer 则不会. 因此在传统的 Flux 中 stores 持有 state , 而在 Redux 中每次 reducer 被调用时, 一个需要被更新的 state 会作为参数传入 reducer . 以此类推, Redux 的 stores 就变成了一个 "无状态的 stores" 并改名为 reducers.
 
 ```
 // As stated before, when creating a Redux instance you must give it a reducer function...
 ```
-正如之前所提到的, 当创建一个 Redux 实例的时候你必须要给一个 rReducer 函数...
+正如之前所提到的, 当创建一个 Redux 实例的时候你必须要给一个 reducer 函数...
 
 ```js
 import { createStore } from 'redux'
