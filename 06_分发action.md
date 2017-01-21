@@ -8,7 +8,7 @@
 // So far we've focused on building our reducer(s) and we haven't dispatched any of our own actions.
 // We'll keep the same reducers from our previous tutorial and handle a few actions:
 ```
-到目前为止, 我们主要集中在构建我们的 reducers上, 而我们还没有分发过任何的 actions .
+到目前为止, 我们主要集中在构建我们的 reducers 上, 而我们还没有分发过任何的 actions .
 
 我们将保留在前面几节中所写的 reducer 函数，并用他们来处理一些 actions :
 
@@ -67,7 +67,7 @@ console.log('store_0 state after initialization:', store_0.getState())
 ```
 让我们开始分发第一个 action ... 记住我们在[简单的action构造器]()一节中所提到的:
 
->>>
+>
   "为了分发一个 action , 我们需要的... 显然是一个分发函数."
 
 ```
@@ -120,7 +120,7 @@ console.log('store_0 state after action AN_ACTION:', store_0.getState())
 // flux theory. And let's make this action creator send an action we actually care about:
 ```
 但是, 等一下! 我们不是应该用 action creator 来发送 action 吗？我们实际上可以用 actionCreator ,
-但由于 actionCreator 所做的只是返回一个 action 对象, 对于本例子将不会带来更多的东西. 不过为了日后可能出现的问题, 让我们遵循 flux 理论使用正确的方式来做吧. 用 action creator 来发送那些我们实际关注的 action :
+但由于 actionCreator 所做的只是返回一个 action 对象, 对于本例子将不会带来更多的东西. 不过为了日后可能出现的问题, 让我们遵循 Flux 理论使用正确的方式来做吧. 用 action creator 来发送那些我们实际关注的 action :
 
 ```js
 var setNameActionCreator = function (name) {
