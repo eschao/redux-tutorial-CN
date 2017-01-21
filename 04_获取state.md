@@ -179,7 +179,7 @@ console.log('store_3 state after initialization:', store_3.getState());
 * 该例子假设我们的 action 包含一个 **type** 属性和一个 **value** 属性. **type** 属性是 Flux actions 中最主要的一个约定, 而 **value**属性可以拥有其他的任何值
 * 你将在你的 reducers 函数中经常看到这样的代码范式: 使用 ```switch``` 语句来合适地处理 reducer 函数接受到的 action.
 * 当使用 ```switch``` 语句的时候，永远也不要忘记这一行语句: **"defualt: return state"**, 因为一旦缺失这一行，你的 reducer 函数就可能返回一个 **undefined** 的 state .
-* 注意我们是如何通过合并当前的 stat e和 **{message: action.value}** 来返回一个新的 state 的, 这都要归功于 ES7 超棒的对象展开语法: { ...state, message: action.value }
+* 注意我们是如何通过合并当前的 state 和 **{message: action.value}** 来返回一个新的 state 的, 这都要归功于 ES7 超棒的对象展开语法: { ...state, message: action.value }
 * 同时我们也要注意之所以 ES7 的对象展开语法适合本例子, 是因为它基于我们的 state 做了一个 {message: action.value} 的浅拷贝 (...). 但如果我们拥有一个更加复杂且内嵌的数据结构, 你可能就会选择一个完全不同的方式来更新你程序的 state , 比如:
   - 使用[Immutable.js](https://facebook.github.io/immutable-js/)
   - 使用[Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
