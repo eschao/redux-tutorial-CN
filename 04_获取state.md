@@ -28,7 +28,7 @@ var store_0 = createStore(reducer_0)
 ```
 // To get the state that Redux is holding for us, you call getState
 ```
-你可以通过调用**getState**函数来获取Redux为我们持有的程序State
+你可以通过调用 **getState** 函数来获取 Redux 为我们持有的程序 state
 
 ```js
 console.log('store_0 state after initialization:', store_0.getState())
@@ -50,17 +50,18 @@ console.log('store_0 state after initialization:', store_0.getState())
 // Our reducer is not returning anything right now so the state of our application is what
 // reducer() returns, hence "undefined".
 ```
-那么我们程序的State在初始化后仍然是**undefined**? 好吧, 它当然就该如此, 这是因为我们的Reducer什么也没做...
-还记得我们在第二节中是如何描述我们所期望的Reducer的行为吗?
+那么我们程序的 state 在初始化后仍然是 **undefined** 吗? 好吧, 它当然就该如此, 这是因为我们的 reduce r什么也没做...
+
+还记得我们在第二节中是如何描述我们所期望的 reducer 行为吗?
 >>>
-"Reducer仅仅是一个函数，这个函数接受你程序当前的State和Action, 并返回一个被修改后的新State"
+"Reducer 仅仅是一个函数，这个函数接受你程序当前的 state 和 action , 并返回一个被修改后的新 state "
   
-由于目前我们的Reducer什么也没有返回, 因此程序的State也就是Reducer()函数返回的**"undefined"**.
+由于目前我们的 reducer 什么也没有返回, 因此程序的 state 也就是 ```reducer()``` 函数返回的 **"undefined"**.
 
 ```
 // Let's try to send an initial state of our application if the state given to reducer is undefined:
 ```
-如果传给Reducer函数的State是undefined的话, 我们就试着赋予程序一个初始化的State:
+如果传给 reducer 函数的 state 是 undefined 的话, 我们就试着赋予程序一个初始化的 state :
 ```js
 var reducer_1 = function (state, action) {
     console.log('reducer_1 was called with state', state, 'and action', action)
@@ -86,12 +87,12 @@ console.log('store_1 state after initialization:', store_1.getState());
 ```
 // As expected, the state returned by Redux after initialization is now {}
 ```
-正如我们所期望的一样, 在初始化之后Redux返回的程序State如今变为 **{}**
+正如我们所期望的一样, 在初始化之后 Redux 返回的程序 state 如今变为 **{}**
 
 ```
 // There is however a much cleaner way to implement this pattern thanks to ES6:
 ```
-这要感谢ES6的语法，我们可以用一个更清晰的方式来实现同样的功能:
+这要感谢 ES6 的语法，我们可以用一个更清晰的方式来实现同样的功能:
 
 ```js
 var reducer_2 = function (state = {}, action) {
@@ -116,13 +117,13 @@ console.log('store_2 state after initialization:', store_2.getState())
 // You've probably noticed that since we've used the default parameter on state parameter of reducer_2,
 // we no longer get undefined as state's value in our reducer's body.
 ```
-你可能已经注意到由于我们在reducer_2函数的State参数上使用了默认值，我们再也不会在Reducer的函数体内获得**undefined**的State
+你可能已经注意到由于我们在 reducer_2 函数的 state 参数上使用了默认值，我们再也不会在 reducer 的函数体内获得 **undefined** 的 state
 
 ```
 // Let's now recall that a reducer is only called in response to an action dispatched and
 // let's fake a state modification in response to an action type 'SAY_SOMETHING'
 ```
-回想一下, 一个Reducer函数仅仅当响应一个被分发的Action时才会被调用, 既然如此我们就伪造一个修改State的行为用来响应类型为'SYA_SOMETHING'的Action
+回想一下, 一个 reducer 函数仅仅当响应一个被分发的 action 时才会被调用, 既然如此我们就伪造一个修改 state 的行为用来响应类型为 'SYA_SOMETHING' 的 action
 
 ```js
 var reducer_3 = function (state = {}, action) {
@@ -146,7 +147,7 @@ console.log('store_3 state after initialization:', store_3.getState());
 // Output: reducer_3 was called with state {} and action { type: '@@redux/INIT' }
 // Output: store_3 state after initialization: {}
 ```
-运行后输出: 参数state: {}和action { type: '@@redux/INIT' }被传入reducer_3并调用
+运行后输出: 
 
 ```js
     reducer_3 was called with state {} and action { type: '@@redux/INIT' }
@@ -174,16 +175,16 @@ console.log('store_3 state after initialization:', store_3.getState());
 //        - or whatever other strategy that suits your needs and the structure of your state since
 //          Redux is absolutely NOT opinionated on this (remember, Redux is a state container).
 ```
-目前为止我们程序的State没有任何变化，这是因为我们还没有分发任何的Action. 但在最近的这个例子中，有一些重要的东西需要我们注意:
-* 该例子假设我们的Action包含一个**type**属性和一个**value**属性. **type**属性是Flux Actions中最主要的一个约定, 而**value**属性可以拥有其他任何的值
-* 你将在你的Reducers函数中经常看到这样的代码范式: 使用switch语句来合适地处理Reducer函数接受到的Action.
-* 当使用switch语句的时候，永远也不要忘记这一行语句: **"defualt: return state"**, 因为一旦缺失这一行，你的Reducer函数就可能返回一个**undefined**的State.
-* 注意我们是如何通过合并当前的State和 **{message: action.value}**来返回一个新的State的, 这都要归功于ES7超棒的对象展开语法: { ...state, message: action.value }
-* 同时我们也要注意之所以ES7的对象展开语法适合本例子, 是因为它基于我们的State做了一个{message: action.value}的浅拷贝(...). 但如果我们拥有一个更加复杂且内嵌的数据结构, 你可能就会选择一个完全不同的方式来更新你程序的State, 比如:
+目前为止我们程序的 state 没有任何变化，这是因为我们还没有分发任何的 action . 但在最近的这个例子中，有一些重要的东西需要我们注意:
+* 该例子假设我们的 action 包含一个 **type** 属性和一个 **value** 属性. **type** 属性是 Flux actions 中最主要的一个约定, 而 **value**属性可以拥有其他的任何值
+* 你将在你的 reducers 函数中经常看到这样的代码范式: 使用 ```switch``` 语句来合适地处理 reducer 函数接受到的 action.
+* 当使用 ```switch``` 语句的时候，永远也不要忘记这一行语句: **"defualt: return state"**, 因为一旦缺失这一行，你的 reducer 函数就可能返回一个 **undefined** 的 state .
+* 注意我们是如何通过合并当前的 stat e和 **{message: action.value}** 来返回一个新的 state 的, 这都要归功于 ES7 超棒的对象展开语法: { ...state, message: action.value }
+* 同时我们也要注意之所以 ES7 的对象展开语法适合本例子, 是因为它基于我们的 state 做了一个 {message: action.value} 的浅拷贝 (...). 但如果我们拥有一个更加复杂且内嵌的数据结构, 你可能就会选择一个完全不同的方式来更新你程序的 state , 比如:
   - 使用[Immutable.js](https://facebook.github.io/immutable-js/)
   - 使用[Object.assign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)
   - 手工合并
-  - 或者其他任何适合你需求和程序数据结构的方法, 因为Redux对此绝无任何的限制.(记住, Redux是一个State容器)
+  - 或者其他任何适合你需求和程序数据结构的方法, 因为 Redux 对此绝无任何的限制.(记住, Redux 是一个 state 容器)
 
 ```
 // Now that we're starting to handle actions in our reducer let's talk about having multiple reducers and
