@@ -8,7 +8,7 @@
 // We started to talk a little about actions in the introduction but what exactly are those "action creators"
 // and how are they linked to "actions"?
 ```
-在[简介一节](/00_简介.md)中我们稍稍地涉及了一下 actions , 但究竟什么是" action creator "? 它们又是怎样与" actions "关联起来的呢？
+在[简介一节](/00_简介.md)中我们稍稍地涉及了一下 actions , 但究竟什么是 "action creator" ? 它们又是怎样与 "actions" 关联起来的呢？
 
 ```
 // It's actually so simple that a few lines of code can explain it all!
@@ -74,7 +74,7 @@ console.log(actionCreator())
 // we'll see in the next section how they are called in Redux.
 ```
 
-为了分发一个 action ，我们需要的... 显然是一个分发函数. 为了让感兴趣的人得知该 actio n发生了, 我们需要一个机制去注册 "handlers" . 这些对 action的 "handlers" 在传统的 Flux 程序中被称之为 stores , 而我们将在接下来的章节中看到他们在 Redux 中被称之为什么.
+为了分发一个 action ，我们需要的... 显然是一个分发函数. 为了让感兴趣的人得知该 action 发生了, 我们需要一个机制去注册 "handlers" . 这些用于处理 action 的 "handlers" 在传统的 Flux 程序中被称之为 stores , 而我们将在接下来的章节中看到他们在 Redux 中被称之为什么.
 
 ```
 // So far here is the flow of our application:
